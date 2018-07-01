@@ -1,0 +1,105 @@
+/* CSS Document */
+body,td,th,p {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10pt;
+  color: #333;
+  line-height: 1.5;
+  margin: 0;
+}
+body {
+  background-color: #fdfdfd;
+}
+ul, li {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 2.5vh;
+  color: #333;
+}
+a {
+  color: orange;
+  text-decoration: none;
+}
+a:hover, a:focus {
+  color: #3397db;
+  text-decoration: none;
+}
+a img{
+  border: none 0px #fff;
+}
+h1, h2, h3 {
+  font-family: Arial, Helvetica, sans-serif;
+}
+/*article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+  display: block;
+}*/
+#maincontent {
+  background-color: #f3f3f3;
+  width: 100%;
+}
+/* ====================== Navigation ====================== */
+nav {
+  width: 100%;
+  height: 80px;
+  background-color: #252831;
+}
+nav h1 {
+  margin: auto;
+  padding: 20px;
+  text-align:center;
+}
+nav h1 a {
+  color: #fff;
+  font-size: 14pt;
+  font-weight: 200;
+  letter-spacing: 10px;
+  text-transform: uppercase;
+}
+#map {
+  /*position: absolute;*/
+  transition: left 1s ease;
+  left: -100%;
+  height: 50vh;
+  width: 100%;
+  margin-top:auto;
+  background-color: #ccc;
+}
+/* ====================== Restaurant Filtering ====================== */
+.filter-options {
+  width: 100%;
+  height: 100%;
+  background-color: #29648b;
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+}
+.filter-options h2 {
+  color: white;
+  font-size: 2vw;
+  font-weight: normal;
+  line-height: 1;
+  margin: 5px 10px;
+  width: calc((100%-20px)/4);
+}
+.filter-options select {
+  background-color: white;
+  border: 1px solid #fff;
+  font-family: Arial,sans-serif;
+  font-size: 2vw;
+  height: 100%;
+  letter-spacing: 0;
+  margin: 10px auto 10px auto;
+  padding: 0 10px;
+  width: calc((100% - 20px)/3);
+}
+@media screen and (max-width: 700px) {
+  .filter-options h2 {
+    width: 100%;
+    font-size: 3vw;
+    text-align: center;
+  }
+  .filter-options select {
+    width: 100%;
+    height: 5vh;
+    margin: 10px 10px 10px 10px;
+    font-size: 3vw;
+  }
+}

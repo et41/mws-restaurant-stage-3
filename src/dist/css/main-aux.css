@@ -1,0 +1,44 @@
+
+
+
+#restaurants-list li h2 {
+  color: #703f0a;
+  font-size: 13pt;
+  text-transform: uppercase;
+  text-align: center;
+}
+#restaurants-list p {
+  font-size: 11pt;
+}
+#restaurants-list p:last-child {
+  margin: 50px;
+}
+#restaurants-list li a {
+  color: #fff;
+  background: #7d4f00;
+  opacity: 1;
+  border-bottom: 3px solid #eee;
+  display: inline-block;
+  text-decoration: none;
+  margin: 15px 0 0;
+  padding: 8px 30px 10px;
+  text-transform: uppercase;
+}
+
+
+*:focus {
+  outline: none;
+  /* box-shadow: 5px 5px 5px #7A4507; */
+}
+#reviews-list [id^=rating]:focus {
+  outline: none;
+  border: 2px solid #000000;
+
+}
+.filter-options select:focus {
+  outline: none;
+  border: 2px solid #000000;
+}
+*:hover {
+  outline: none;
+}
