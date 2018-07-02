@@ -232,6 +232,7 @@ addReview = () => {
   breadcrumb.style.opacity = "0.5";
 
 }
+
 /**
  * Get input values: Username, Rating, Review.
  */
@@ -278,9 +279,76 @@ fetch(`http://localhost:1337/reviews`).then(response => {
 
 
 });
-// "date": "October 26, 2016",1504095567183 09 26 2016
-sendReview = () => {
-;
+
+/**
+ * Close review window
+ */
+closeWindow = () => {
+
+  let rev = document.getElementById('form');
+  rev.style.left = "-100%";
+
+  let main = document.getElementById('maincontent');
+  main.style.opacity = "1";
+
+  let breadcrumb = document.getElementById('breadcrumb');
+  breadcrumb.style.opacity = "1";
+
+}
+
+createNewReviewHTML = (review) => {
+
+  console.log('createNewReviewHTML',review);
+  const li = document.createElement('li');
+  const name = document.createElement('p');
+  name.innerHTML = review.name;
+  //add id to review name.
+  name.setAttribute('id', 'name' + review.name);
+  //add tabindex
+  name.setAttribute('tabindex', '0');
+  li.appendChild(name);
+
+  const monthNames = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+  ];
+
+  let d =review.createdAt;
+
+
+  var dt = new Date(d);
+  date_data = `${dt.getMonth()} ${monthNames[dt.getMonth()]}, ${dt.getFullYear()} `
+
+  const date = document.createElement('p');
+
+
+  date.innerHTML = date_data;
+  //add id to review date.
+  date.setAttribute('id', 'date' + review.name);
+  //add tabindex
+  date.setAttribute('tabindex', '0');
+  li.appendChild(date);
+
+  const rating = document.createElement('p');
+  rating.innerHTML = `Rating: ${review.rating}`;
+  //add id to review rating.
+  rating.setAttribute('id', 'rating' + review.name);
+  //add tabindex
+  rating.setAttribute('tabindex', '0');
+  li.appendChild(rating);
+
+  const comments = document.createElement('p');
+  comments.innerHTML = review.comments;
+  li.appendChild(comments);
+
+
+
+  return li;
+}
+
+/**
+ * Send review to server.
+ */
+ sendReview = () => {
   console.log('in send review',username, rating, review);
   data =  {
     //"id": lastID,
@@ -300,7 +368,42 @@ sendReview = () => {
     }
   }).then(res => res.json())
   .catch(error => console.error('Error:', error))
-  .then(response =>
-   console.log('Success:', response));
+  .then(response => {
+   console.log('Success:', response);
+   closeWindow();
+  const container = document.getElementById('reviews-container');
+
+  const ul = document.getElementById('reviews-list');
+
+  ul.appendChild(createNewReviewHTML(response));
+
+  container.appendChild(ul);
+  });
+}
+
+
+updatePage = () => {
+  //window.location.reload();
+
+  /*fetch(`http://localhost:1337/reviews/?restaurant_id=${getParameterByName('id')}`, {
+    method: 'GET',
+    headers:{
+      'Content-Type': 'application/json'
+    }
+  }).then(res => res.json())
+  .catch(error => console.error('Error:', error))
+  .then(response => {
+    fillReviewsHTML(response);
+
+   console.log('Success:', response);
+ });
+*/
+
+}
+
+deleteReview = () => {
+
+
+
 
 }
