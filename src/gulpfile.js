@@ -78,7 +78,7 @@ gulp.task('serve', ['minify','scripts','scripts-restaurant-review', 'minify-css'
   gulp.watch('css/*.css', ['minify-css']).on('change', browserSync.reload);
   gulp.watch('js/*.js', ['scripts']).on('change', browserSync.reload);
     gulp.watch('js/*.js', ['scripts-restaurant-review']).on('change', browserSync.reload);
-
+    gulp.watch('js/*.js').on('change', browserSync.reload);
   gulp.watch('css/*.css', ['styles']).on('change', browserSync.reload);
 
   gulp.watch('*.html').on('change', browserSync.reload);

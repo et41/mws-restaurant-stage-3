@@ -4,13 +4,18 @@ var map;
 /**
  * Fetch reviews by id.
  */
-fetchReviews = (id) => {//http://localhost:1337/reviews/?restaurant_id=<restaurant_id>
+
+/*fetchReviews = (id) => {//http://localhost:1337/reviews/?restaurant_id=<restaurant_id>
+
   return fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`).then(response => {
       return response.json();
       }).then(response => {
+        console.log('response in normal fetchReviews:',response);
       return response;
   });
-}
+
+}*/
+
 
 /**
  * Get a parameter by name from page URL.
@@ -32,7 +37,7 @@ getParameterByName = (name, url) => {
  * Get current restaurant from page URL.
  */
 fetchRestaurantFromURL = (callback) => {
-  console.log('fetchRestaurantFromURL');
+  //console.log('fetchRestaurantFromURL');
   if (self.restaurant) { // restaurant already fetched!
     callback(null, self.restaurant)
     return;
@@ -43,7 +48,7 @@ fetchRestaurantFromURL = (callback) => {
     callback(error, null);
   } else {
     DBHelper.fetchRestaurantById(id, (error, restaurant) => {
-      console.log('restaurant in DBHelper.fetchRestaurantById', restaurant);
+      //console.log('restaurant in DBHelper.fetchRestaurantById', restaurant);
       self.restaurant = restaurant;
       if (!restaurant) {
         console.error(error);
@@ -59,7 +64,7 @@ fetchRestaurantFromURL = (callback) => {
  * Create restaurant HTML and add it to the webpage
  */
 fillRestaurantHTML = (restaurant = self.restaurant) => {
-  console.log('fillRestaurantHTML');
+  //console.log('fillRestaurantHTML');
   const name = document.getElementById('restaurant-name');
   name.innerHTML = restaurant.name;
 
@@ -106,15 +111,17 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
   }
 }
 
+
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-fillReviewsHTML = (reviews) => {
+fillReviewsHTML = (reviews, callback) => {
 
   let id = getParameterByName('id');
+  console.log('reviews in fillReviewsHTML 1', reviews);
 
-  fetchReviews(id).then(reviews => {
-
+  DBHelper.fetchReviews(id, (error, reviews) => {
+  console.log('reviews in fillReviewsHTML 2', reviews);
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h3');
   title.innerHTML = 'Reviews';
@@ -134,7 +141,7 @@ fillReviewsHTML = (reviews) => {
     ul.appendChild(createReviewHTML(review));
   });
   container.appendChild(ul);
-});
+  });
 
 }
 
@@ -142,7 +149,7 @@ fillReviewsHTML = (reviews) => {
  * Create review HTML and add it to the webpage.
  */
 createReviewHTML = (review) => {
-  console.log('createReviewHTML');
+  //console.log('createReviewHTML');
   const li = document.createElement('li');
   const name = document.createElement('p');
   name.innerHTML = review.name;
@@ -190,7 +197,7 @@ createReviewHTML = (review) => {
  * Add restaurant name to the breadcrumb navigation menu
  */
 fillBreadcrumb = (restaurant=self.restaurant) => {
-  console.log('fillBreadcrumb:');
+  //console.log('fillBreadcrumb:');
   const breadcrumb = document.getElementById('breadcrumb-ol');
   const li = document.createElement('li');
   li.innerHTML = restaurant.name;
@@ -202,7 +209,7 @@ fillBreadcrumb = (restaurant=self.restaurant) => {
  * Manage focus in restaurant container part
  */
 document.addEventListener('keyup', (e) => {
-  console.log('e review: ' , e);
+ // console.log('e review: ' , e);
   let keyonElement = e.srcElement.id;
   const TABKEY = 9;
   if(e.keyCode == TABKEY) {
@@ -272,13 +279,13 @@ inputReview.addEventListener('keyup', () => {
 
 let lastID;
 
-fetch(`http://localhost:1337/reviews`).then(response => {
+/*fetch(`http://localhost:1337/reviews`).then(response => {
   return response.json();
   }).then(response => {
   lastID = response[response.length-1].id;
 
 
-});
+});*/
 
 /**
  * Close review window
@@ -308,20 +315,16 @@ createNewReviewHTML = (review) => {
   name.setAttribute('tabindex', '0');
   li.appendChild(name);
 
+  //review date
   const monthNames = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
   ];
-
   let d =review.createdAt;
-
-
   var dt = new Date(d);
   date_data = `${dt.getMonth()} ${monthNames[dt.getMonth()]}, ${dt.getFullYear()} `
-
   const date = document.createElement('p');
-
-
   date.innerHTML = date_data;
+
   //add id to review date.
   date.setAttribute('id', 'date' + review.name);
   //add tabindex
@@ -339,8 +342,6 @@ createNewReviewHTML = (review) => {
   const comments = document.createElement('p');
   comments.innerHTML = review.comments;
   li.appendChild(comments);
-
-
 
   return li;
 }
@@ -369,8 +370,8 @@ createNewReviewHTML = (review) => {
   }).then(res => res.json())
   .catch(error => console.error('Error:', error))
   .then(response => {
-   console.log('Success:', response);
-   closeWindow();
+  console.log('Success:', response);
+  closeWindow();
   const container = document.getElementById('reviews-container');
 
   const ul = document.getElementById('reviews-list');
@@ -378,32 +379,20 @@ createNewReviewHTML = (review) => {
   ul.appendChild(createNewReviewHTML(response));
 
   container.appendChild(ul);
+
   });
 }
 
+/*  fetch(`http://localhost:1337/reviews/56`, {
+  method: 'DELETE',
+  headers:{
+    'Content-Type': 'application/json'
+  }
+}).then(res => {
+  console.log('DELETE');
+  return    res.json();
 
-updatePage = () => {
-  //window.location.reload();
+})
+.catch(error => console.error('Error:', error));
 
-  /*fetch(`http://localhost:1337/reviews/?restaurant_id=${getParameterByName('id')}`, {
-    method: 'GET',
-    headers:{
-      'Content-Type': 'application/json'
-    }
-  }).then(res => res.json())
-  .catch(error => console.error('Error:', error))
-  .then(response => {
-    fillReviewsHTML(response);
-
-   console.log('Success:', response);
- });
 */
-
-}
-
-deleteReview = () => {
-
-
-
-
-}

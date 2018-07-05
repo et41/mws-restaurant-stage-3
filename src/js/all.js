@@ -5,12 +5,18 @@ initIDB = () => {
   if(!('indexedDB' in window)) {
      console.log('This browser doesnt support idb');
   }
-  return idb.open('restaurant-app', 1, function(upgradeDb) {
+  return idb.open('restaurant-app', 2, function(upgradeDb) {
     switch (upgradeDb.oldVersion) {
       case 0:
         console.log('Creating the restaurants object store');
         upgradeDb.createObjectStore('restaurants', {keyPath: 'id'});
-
+      case 1:
+        console.log('Creating the reviews object store');
+        upgradeDb.createObjectStore('reviews', {keyPath: 'id'});
+      case 2:
+        console.log('Creating restaurant id index');
+        var store = upgradeDb.transaction.objectStore('reviews');
+        store.createIndex('restaurant_id', 'restaurant_id');
       }
   });
 }
@@ -43,7 +49,7 @@ class DBHelper {
       console.log('get data from server!!');
       fetch(`http://localhost:1337/restaurants`).then(response => {
       return response.json();
-    }).then(response => {
+      }).then(response => {
 
       res.restaurants = response;
       const restaurants = res.restaurants;
@@ -67,6 +73,70 @@ class DBHelper {
 
 
   }
+/*return dbPromise.then(function(db) {
+  var tx = db.transaction('products', 'readonly');
+  var store = tx.objectStore('products');
+  var index = store.index('name');
+  return index.get(key);
+});*/
+static fetchReviews(id, callback)  {//http://localhost:1337/reviews/?restaurant_id=<restaurant_id>
+
+initIDB().then(db =>  {
+
+  console.log('initDB fetchReviews',db,id);
+
+  if(!db) return;
+
+  var tx = db.transaction('reviews', 'readwrite');
+  var store = tx.objectStore('reviews');
+  var index = store.index('restaurant_id');
+  //console.log('index......', index.get(key));
+
+  let num = Number(id);
+  index.getAll(num).then(items => {
+    console.log('get data from fetchdb before i!!',items.restaurant_id);
+
+    if(items.length > 0 ) {
+     items.filter((e) => {
+      console.log('e.restaurant_id',e.restaurant_id);
+        if(e.restaurant_id == num) {
+          return e;
+        }
+      });
+      console.log('get data from fetchdb!!',items);
+      self.restaurant.reviews = items;
+      callback(null, self.restaurant.reviews);
+
+    }else {
+
+      console.log('get data from server!!');
+      return fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`).then(response => {
+
+         return response.json();
+
+          }).then(response => {
+            console.log('response in fetch reviews by id', response );
+            var tx_review = db.transaction('reviews', 'readwrite');
+            var store_review = tx_review.objectStore('reviews');
+
+            response.forEach((item) => {
+            //console.log('Adding item', item);
+              store_review.put(item);
+
+            });
+
+            self.restaurant.reviews = response;
+            callback(null, self.restaurant.reviews);
+          });
+
+    }
+
+
+  });
+
+
+  });
+}
   /**
    * Map marker for a restaurant.
    */
