@@ -94,15 +94,17 @@ initIDB().then(db =>  {
 
   let num = Number(id);
   index.getAll(num).then(items => {
-    console.log('get data from fetchdb before i!!',items.restaurant_id);
+    console.log('get data from fetchdb before i!!',items);
 
     if(items.length > 0 ) {
-     items.filter((e) => {
-      console.log('e.restaurant_id',e.restaurant_id,e);
+
+    /* items.filter((e) => {
+      console.log('e.restaurant_id,e',e.restaurant_id,e);
         if(e.restaurant_id == num) {
           return e;
         }
-      });
+      });*/
+
       console.log('get data from fetchdb!!',items);
       self.restaurant.reviews = items;
       callback(null, self.restaurant.reviews);

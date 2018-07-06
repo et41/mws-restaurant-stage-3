@@ -43,6 +43,7 @@ fetchRestaurantFromURL = (callback) => {
     return;
   }
   const id = getParameterByName('id');
+  console.log('type of id ', parseInt(id,10));
   if (!id) { // no id found in URL
     error = 'No restaurant id in URL'
     callback(error, null);
@@ -351,9 +352,11 @@ createNewReviewHTML = (review) => {
  */
  sendReview = () => {
   console.log('in send review',username, rating, review);
+  let id = (getParameterByName('id'));
+  id = parseInt(id,10);
   data =  {
     //"id": lastID,
-    "restaurant_id": Number(getParameterByName('id')),
+    "restaurant_id": id,
     "name":username,
     "date" : Date.now(),
     "createdAt": Date.now(),
@@ -361,7 +364,8 @@ createNewReviewHTML = (review) => {
     "rating": rating,
     "comments": review
   };
-  fetch(`http://localhost:1337/reviews`, {
+
+  fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`, {
     method: 'POST',
     body: JSON.stringify(data),
     headers:{
@@ -370,7 +374,17 @@ createNewReviewHTML = (review) => {
   }).then(res => res.json())
   .catch(error => console.error('Error:', error))
   .then(response => {
-  console.log('Success:', response);
+
+  console.log('Success:', response.restaurant_id);
+  response.restaurant_id = id;
+  initIDB().then((db) =>  {
+  console.log('in init db after review added');
+  if(!db) return;
+  var tx = db.transaction('reviews', 'readwrite');
+  var store = tx.objectStore('reviews');
+
+  store.put(response);
+  });
   closeWindow();
   const container = document.getElementById('reviews-container');
 
@@ -382,8 +396,8 @@ createNewReviewHTML = (review) => {
 
   });
 }
-
-/*  fetch(`http://localhost:1337/reviews/56`, {
+/*for( let i = 57 ; i < 71 ; i++) {
+ fetch(`http://localhost:1337/reviews/${i}`, {
   method: 'DELETE',
   headers:{
     'Content-Type': 'application/json'
@@ -394,5 +408,6 @@ createNewReviewHTML = (review) => {
 
 })
 .catch(error => console.error('Error:', error));
+}
 
 */
