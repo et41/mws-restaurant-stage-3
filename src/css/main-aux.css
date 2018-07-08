@@ -11,6 +11,21 @@
 #restaurants-list p:last-child {
   margin: 50px;
 }
+
+#restaurants-list li span  {
+    font-size: 30px;
+    color: #cd9292;
+    /* padding: 0 0 0 50vw; */
+    margin-top: 15px;
+    float: right;
+}
+#restaurants-list li .checked {
+    font-size: 30px;
+    color: #c22c2c;
+    /* padding: 0 0 0 50vw; */
+    margin-top: 15px;
+    float: right;
+}
 #restaurants-list li a {
   color: #fff;
   background: #7d4f00;

@@ -27,7 +27,13 @@ createRestaurantHTML = (restaurant,callback) => {
   const more = document.createElement('a');
   more.innerHTML = 'View Details';
   more.href = DBHelper.urlForRestaurant(restaurant);
-  li.append(more)
+  li.append(more);
+
+  const fav = document.createElement('span');
+  fav.id = 'fav' + restaurant.id;
+  fav.className='fa fa-star';
+  //fav.innerHTML = 'favorite';
+  li.append(fav);
 
   loadImage = (restaurant, idStr) => {
   console.log('loadImage,restaurant,idStr', restaurant,idStr);
@@ -83,3 +89,81 @@ console.log('afterUpdate');
   image.sizes =  "(max-width: 600px) 60vw,(min-width: 601px) 50vw";
  });
 }
+
+/**
+ * Add and remove favorite restaurants.
+ */
+addFavorite = (id) => {
+
+  fetch(`http://localhost:1337/restaurants/${id}/`,
+   {
+
+    method: 'PUT',
+    body: JSON.stringify({"is_favorite":true}),
+    headers:{
+      'Content-Type': 'application/json'
+    }
+
+  }).then(res => {
+    console.log('response status:', res);
+    return res.json();
+
+  }).then(response => {
+    console.log('response status:', response.is_favorite);
+
+  });
+}
+
+removeFavorite = (id) => {
+
+  fetch(`http://localhost:1337/restaurants/${id}/`,
+   {
+
+    method: 'PUT',
+    body: JSON.stringify({"is_favorite":false}),
+    headers:{
+      'Content-Type': 'application/json'
+    }
+
+  }).then(res => {
+    console.log('response status:', res);
+    return res.json();
+
+  }).then(response => {
+    console.log('response status:', response.is_favorite);
+
+  });
+}
+
+
+
+window.addEventListener('click', (e) => {
+
+  let clickedElementID = e.target.id ;
+  let clickedTarget = e.target;
+  let clickedElementIDNumber = clickedElementID.replace( /^\D+/g, '');
+
+
+  if (clickedElementID.includes('fav') && !clickedTarget.classList.contains('checked') ) {
+
+    console.log('clicked', e);
+
+    addFavorite(clickedElementIDNumber);
+
+    clickedTarget.classList.toggle('checked');
+
+
+  }
+
+  else if (clickedElementID.includes('fav') && clickedTarget.classList.contains('checked')) {
+
+    removeFavorite(clickedElementIDNumber);
+
+    clickedTarget.classList.toggle('checked');
+
+  }
+
+
+});
+
+
