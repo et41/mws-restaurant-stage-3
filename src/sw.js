@@ -50,6 +50,7 @@ self.addEventListener('activate', (event) => {
 
 
 self.addEventListener('fetch', (event) => {
+  console.log('event in sw', event.request);
   event.respondWith(
     caches.open('restaurant').then((cache) => {
       return cache.match(event.request).then((response) => {

@@ -1,11 +1,30 @@
 console.log('mainRestaurants.js');
+
+
+changeFavRestaurantBorder = (is_fav, listNumber) => {
+
+  let favRestaurant = document.querySelectorAll('#restaurants-list li');
+
+  if(is_fav) {
+
+    favRestaurant[listNumber].style.borderColor = '#c22c2c';
+
+  } else {
+
+    favRestaurant[listNumber].style.borderColor = '#ccc';
+
+  }
+
+}
+
 /**
  * Create restaurant HTML.
  */
 createRestaurantHTML = (restaurant,callback) => {
-  console.log('createRestaurantHTML');
+  console.log('createRestaurantHTML',restaurant);
 
   const li = document.createElement('li');
+  io.observe(li);
   let image = document.createElement('img');
   image.className = 'restaurant-img';
   //add id to images
@@ -26,21 +45,45 @@ createRestaurantHTML = (restaurant,callback) => {
   const more = document.createElement('a');
   more.innerHTML = 'View Details';
   more.href = DBHelper.urlForRestaurant(restaurant);
-  li.append(more)
-  //addIntersection();
+  li.append(more);
+  const fav = document.createElement('span');
+  /*const info = document.createElement('p');
+  info.id = 'info' + restaurant.id;*/
+  fav.id = 'fav' + restaurant.id;
+
+  // control favorite status of restaurant
+  DBHelper.controlFav(restaurant.id).then(response => {
+    console.log('response after control fav response', response,restaurant.is_favorite);
+    if(response == true) {
+      console.log('in iffffff',restaurant.id );
+      changeFavRestaurantBorder(true, restaurant.id-1);
+     /* info.innerHTML = "Your Favorite";
+      info.className = 'checked';*/
+      fav.className='fa fa-star checked';
+    } else {
+    console.log('in elseeeeee',restaurant.id );
+    /* info.innerHTML = "Mark as Favorite";
+     info.className = '';*/
+
+    fav.className='fa fa-star';
+    }
+  });
+  //fav.append(info);
+  li.append(fav);
 
   loadImage = (restaurant, idStr) => {
-
+  console.log('loadImage,restaurant,idStr', restaurant,idStr);
   image = document.getElementById(idStr);
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
-  image.alt = "showing restaurant is " + restaurant.name + " and cuisine type is " + restaurant.cuisine_type;
 
-  // add alt tag to images.
   //add srcset and sizes to make responsive images.
   image.srcset =  `images/${restaurant.id}-400small.jpg 480w,images/${restaurant.id}-600medium.jpg 600w`;
   image.sizes =  "(max-width: 600px) 60vw,(min-width: 601px) 50vw";
 
   }
+
+  // add alt tag to images.
+  image.alt = "showing restaurant is " + restaurant.name + " and cuisine type is " + restaurant.cuisine_type;
 
   return li
 }
@@ -69,7 +112,7 @@ updateSelectedRestaurants = () => {
 }
 
 afterUpdate = (x) => {
-      console.log('afterUpdate');
+console.log('afterUpdate');
 
  x.forEach(a => {
   let restaurant = a;
@@ -82,3 +125,84 @@ afterUpdate = (x) => {
   image.sizes =  "(max-width: 600px) 60vw,(min-width: 601px) 50vw";
  });
 }
+
+/**
+ * Add and remove favorite restaurants.
+ */
+addFavorite = (id) => {
+
+  fetch(`http://localhost:1337/restaurants/${id}/`,
+   {
+
+    method: 'PUT',
+    body: JSON.stringify({"is_favorite":true}),
+    headers:{
+      'Content-Type': 'application/json'
+    }
+
+  }).then(res => {
+    console.log('response status:', res);
+    return res.json();
+
+  }).then(response => {
+    console.log('response status:', response.is_favorite);
+
+  });
+}
+
+removeFavorite = (id) => {
+
+  fetch(`http://localhost:1337/restaurants/${id}/`,
+   {
+
+    method: 'PUT',
+    body: JSON.stringify({"is_favorite":false}),
+    headers:{
+      'Content-Type': 'application/json'
+    }
+
+  }).then(res => {
+    console.log('response status:', res);
+    return res.json();
+
+  }).then(response => {
+    console.log('response status:', response.is_favorite);
+  });
+
+}
+
+
+
+window.addEventListener('click', (e) => {
+
+  let clickedElementID = e.target.id ;
+  let clickedTarget = e.target;
+  let clickedElementIDNumber = clickedElementID.replace( /^\D+/g, '');
+
+
+  if (clickedElementID.includes('fav') && !clickedTarget.classList.contains('checked') ) {
+
+    console.log('clicked', e);
+
+    addFavorite(clickedElementIDNumber);
+
+    clickedTarget.classList.toggle('checked');
+
+    changeFavRestaurantBorder(true, clickedElementIDNumber-1);
+
+  }
+
+  else if (clickedElementID.includes('fav') && clickedTarget.classList.contains('checked')) {
+
+    removeFavorite(clickedElementIDNumber);
+
+    clickedTarget.classList.toggle('checked');
+
+    changeFavRestaurantBorder(false, clickedElementIDNumber-1);
+
+  }
+
+
+});
+
+

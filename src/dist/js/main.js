@@ -13,21 +13,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
   fetchNeighborhoods();
   fetchCuisines();
 
- // activateMap();
-});
-
-window.addEventListener('load', () => {
-
-  addIntersection();
 
 });
 
-/*activateMap = () => {
-  let mapId = document.getElementById('map');
-  mapId.style.position = 'relative';
-  mapId.style.left = 0;
-}
-*/
+
 /**
  * Fetch all neighborhoods and set their HTML.
  */
@@ -66,7 +55,7 @@ initMap = () => {
     lng: -73.987501
   };
   self.map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 11,
+    zoom: 12,
     center: loc,
     scrollwheel: false
   });
@@ -150,11 +139,6 @@ var elementCollapsable = document.getElementById('collapsible');
 elementCollapsable.addEventListener('click', () => {
   initMap();
 });
-
-console.log('map.js');
-/*document.addEventListener('DOMContentLoaded', () => {
-  initMap();
-});*/
 
 
 /**

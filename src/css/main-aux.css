@@ -8,24 +8,28 @@
 #restaurants-list p {
   font-size: 11pt;
 }
-#restaurants-list p:last-child {
+/*#restaurants-list p:last-child {
   margin: 50px;
-}
+}*/
 
 #restaurants-list li span  {
-    font-size: 30px;
+font-size: 30px;
     color: #cd9292;
-    /* padding: 0 0 0 50vw; */
-    margin-top: 15px;
+    margin-top: 20px;
     float: right;
 }
+/*#restaurants-list li span p  {
+  font-size: 22px;
+  color: #cd9292;
+  float: left;
+  margin: 0 10px 0 0;
+}*/
+
 #restaurants-list li .checked {
-    font-size: 30px;
     color: #c22c2c;
     /* padding: 0 0 0 50vw; */
-    margin-top: 15px;
-    float: right;
 }
+
 #restaurants-list li a {
   color: #fff;
   background: #7d4f00;

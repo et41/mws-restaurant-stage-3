@@ -145,6 +145,25 @@ class DBHelper {
     });
   }
 
+static controlFav(id )  {
+  return fetch(`http://localhost:1337/restaurants/${id}/`,
+   {
+
+    method: 'GET',
+    headers:{
+      'Content-Type': 'application/json'
+    }
+
+  }).then(res => {
+    console.log('response status:', res);
+    return res.json();
+
+  }).then(response => {
+    console.log('response status:', response.is_favorite);
+    return response.is_favorite;
+    });
+  }
+
   /**
    * Fetch restaurants by a cuisine type with proper error handling.
    */

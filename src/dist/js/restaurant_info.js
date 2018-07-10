@@ -374,12 +374,16 @@ createNewReviewHTML = (review) => {
 
       //add new review to db.
       initIDB().then((db) =>  {
+
       console.log('in init db after review added');
+
       if(!db) return;
+
       var tx = db.transaction('reviews', 'readwrite');
       var store = tx.objectStore('reviews');
 
       store.put(response);
+
       });
 
       closeWindow();

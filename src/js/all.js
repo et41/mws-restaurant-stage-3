@@ -523,6 +523,8 @@ var io = new IntersectionObserver(entries => {
 
 
 console.log('mainRestaurants.js');
+
+
 /**
  * Create restaurant HTML.
  */
@@ -552,11 +554,31 @@ createRestaurantHTML = (restaurant,callback) => {
   more.innerHTML = 'View Details';
   more.href = DBHelper.urlForRestaurant(restaurant);
   li.append(more);
-
+  const button = document.createElement('button');
   const fav = document.createElement('span');
+  const info = document.createElement('p');
+
+  info.id = 'info' + restaurant.id;
   fav.id = 'fav' + restaurant.id;
-  fav.className='fa fa-star';
-  //fav.innerHTML = 'favorite';
+
+  // control favorite status of restaurant
+  DBHelper.controlFav(restaurant.id).then(response => {
+    console.log('response after control fav response', response,restaurant.is_favorite);
+    if(response == true) {
+      console.log('in iffffff',restaurant.id );
+      info.innerHTML = "Your Favorite";
+      info.className = 'checked';
+      fav.className='fa fa-star checked';
+    } else {
+    console.log('in elseeeeee',restaurant.id );
+     info.innerHTML = "Mark as Favorite";
+     info.className = '';
+
+    fav.className='fa fa-star';
+    }
+  });
+  button.append(fav);
+  fav.append(info);
   li.append(fav);
 
   loadImage = (restaurant, idStr) => {
@@ -655,8 +677,8 @@ removeFavorite = (id) => {
 
   }).then(response => {
     console.log('response status:', response.is_favorite);
-
   });
+
 }
 
 
@@ -676,6 +698,10 @@ window.addEventListener('click', (e) => {
 
     clickedTarget.classList.toggle('checked');
 
+    let p = document.getElementById('info' + clickedElementIDNumber);
+    p.innerHTML = 'Your Favorite';
+
+    p.style.color = '#c22c2c';
 
   }
 
@@ -685,6 +711,11 @@ window.addEventListener('click', (e) => {
 
     clickedTarget.classList.toggle('checked');
 
+    let p = document.getElementById('info' + clickedElementIDNumber);
+
+    p.innerHTML = 'Mark as Favorite';
+
+    p.style.color = '#cd9292';
   }
 
 

@@ -5,13 +5,13 @@ self.addEventListener('install', (event) => {
      return cache.addAll([
        '/',
        '/index.html',
-      // '/restaurant.html',
+       '/restaurant.html',
        '/css/main-aux.css',
        '/css/main.css',
        '/css/restaurant.css',
-       '/js/main.js',
-       '/js/restaurant_info.js',
-       '/js/dbhelper.js',
+       'dist/js/main.js',
+       'dist/js/restaurant_info.js',
+       'dist/js/dbhelper.js',
        '/restaurants',
        '/images/',
        '/images/1-400small.jpg',
@@ -50,14 +50,23 @@ self.addEventListener('activate', (event) => {
 
 
 self.addEventListener('fetch', (event) => {
+  //console.log('event in sw', event.request);
   event.respondWith(
     caches.open('restaurant').then((cache) => {
       return cache.match(event.request).then((response) => {
+        //  console.log('cache match', response);
         return response || fetch(event.request).then((response) => {
-          cache.put(event.request, response.clone());
-          return response;
+          console.log('fetch to cache', response);
+          if(!response.url.includes('/restaurant') ) {
+         //   console.log('in if fetch to cache', response);
+            cache.put(event.request, response.clone());
+            return response;
+          }else {
+            return response;
+          }
         });
       });
     })
   );
 });
+

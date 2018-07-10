@@ -235,6 +235,8 @@ button {
   padding:0;
 }
 #addReview {
+    font-size: 13px;
+
   box-shadow: 3px 3px 10px #888888;
   background: none;
   background-color: #333;
