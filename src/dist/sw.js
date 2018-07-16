@@ -5,14 +5,14 @@ self.addEventListener('install', (event) => {
      return cache.addAll([
        '/',
        '/index.html',
-       '/restaurant.html',
+      // '/restaurant.html',
        '/css/main-aux.css',
        '/css/main.css',
        '/css/restaurant.css',
        'dist/js/main.js',
        'dist/js/restaurant_info.js',
        'dist/js/dbhelper.js',
-       '/restaurants',
+       //'/restaurants',
        '/images/',
        '/images/1-400small.jpg',
        '/images/1-600medium.jpg',
@@ -50,23 +50,29 @@ self.addEventListener('activate', (event) => {
 
 
 self.addEventListener('fetch', (event) => {
-  //console.log('event in sw', event.request);
+  console.log('event in sw', event);
+  if(event.request.method != 'POST' && !event.request.url.includes('/reviews')
+    && !event.request.url.includes('/reviews')) {
   event.respondWith(
-    caches.open('restaurant').then((cache) => {
+    caches.open('/restaurant').then((cache) => {
       return cache.match(event.request).then((response) => {
         //  console.log('cache match', response);
         return response || fetch(event.request).then((response) => {
           console.log('fetch to cache', response);
-          if(!response.url.includes('/restaurant') ) {
+         // if(!response.url.includes('/restaurant') ) {
          //   console.log('in if fetch to cache', response);
             cache.put(event.request, response.clone());
             return response;
-          }else {
-            return response;
-          }
+         // }else {
+         //   return response;
+        //  }
         });
       });
     })
   );
+}
+else {
+  console.log('it is a POST method');
+}
 });
 

@@ -21,7 +21,7 @@
           "Sunday": "12:00 pm - 4:00 pm, 5:30 pm - 11:00 pm"
         },
         "createdAt": 1504095563444,
-        "updatedAt": "2018-07-10T11:14:50.913Z",
+        "updatedAt": "2018-07-13T09:39:08.389Z",
         "id": 1,
         "is_favorite": false
       },
@@ -45,7 +45,7 @@
           "Sunday": "12:00 pm - 3:00 pm, 5:00 pm - 11:00 pm"
         },
         "createdAt": 1504095568414,
-        "updatedAt": "2018-07-10T11:14:18.207Z",
+        "updatedAt": "2018-07-12T19:46:16.428Z",
         "is_favorite": false,
         "id": 2
       },
@@ -69,9 +69,9 @@
           "Sunday": "11:30 am - 2:00 am"
         },
         "createdAt": 1504095571434,
-        "updatedAt": "2018-07-10T11:44:46.394Z",
+        "updatedAt": "2018-07-10T12:04:05.357Z",
         "id": 3,
-        "is_favorite": true
+        "is_favorite": false
       },
       {
         "name": "Katz's Delicatessen",
@@ -93,8 +93,8 @@
           "Sunday": "Sat - 10:30 pm"
         },
         "createdAt": 1504095567091,
-        "updatedAt": "2018-07-10T11:13:35.479Z",
-        "is_favorite": false,
+        "updatedAt": "2018-07-13T09:41:16.980Z",
+        "is_favorite": true,
         "id": 4
       },
       {
@@ -324,33 +324,6 @@
         "comments": "MEH. I've tried their Jersey location as well but Kang Ho Dong meat quality is severely decreasing. A Korean bbq place with whatever meat? I think NOT!"
       },
       {
-        "id": 10,
-        "restaurant_id": 4,
-        "name": "Steve",
-        "createdAt": 1504095567183,
-        "updatedAt": 1504095567183,
-        "rating": 5,
-        "comments": "In 127 years, little has changed at Katz's. It remains one of New York's â€” and the country's â€” essential Jewish delicatessens. Every inch of the massive Lower East Side space smells intensely of pastrami and rye loaves. The sandwiches are massive, so they are best when shared. Order at the counter, and don't forget to tip your slicer â€” your sandwich will be better for it."
-      },
-      {
-        "id": 11,
-        "restaurant_id": 4,
-        "name": "Allen",
-        "createdAt": 1504095567183,
-        "updatedAt": 1504095567183,
-        "rating": 5,
-        "comments": "If I lived in NY and got diabetes from eating here every single time I ate, I would do it over and over and over again just for that first bite. These guys know how to make a sandwich. The heart attack comes free of charge! Came by while I was visiting NYC. First pit-stop when I come back :)!"
-      },
-      {
-        "id": 12,
-        "restaurant_id": 4,
-        "name": "David",
-        "createdAt": 1504095567183,
-        "updatedAt": 1504095567183,
-        "rating": 2,
-        "comments": "Ok so four of us came. One more later who didn't order becauase it's so expensive and simple. Seriously, a bunch of meat albeit you can sample beforehand on rye/white/wheat bread. Cheese extra. Pickles free, you can just ask them at the pickup counter. But seriously 20 bucks gone for an non-flavored half sandwich. And a line that is long, especially if you want seating. I'm down to just take a quick look where Sally and Harry sat and leave to the other delis all around NYC. Oh and they accept Samsung pay."
-      },
-      {
         "id": 13,
         "restaurant_id": 5,
         "name": "Steve",
@@ -501,26 +474,6 @@
         "id": 39
       },
       {
-        "restaurant_id": "4",
-        "name": "vav",
-        "date": 1530870691554,
-        "createdAt": 1530870691554,
-        "updatedAt": 1530870691554,
-        "rating": "4",
-        "comments": "enaneana",
-        "id": 71
-      },
-      {
-        "restaurant_id": "4",
-        "name": "rwygw",
-        "date": 1530870721617,
-        "createdAt": 1530870721617,
-        "updatedAt": 1530870721617,
-        "rating": "4",
-        "comments": "dsgnssnns",
-        "id": 72
-      },
-      {
         "restaurant_id": 2,
         "name": "eren",
         "date": 1530870954927,
@@ -591,54 +544,84 @@
         "id": 79
       },
       {
-        "restaurant_id": "9",
-        "name": "Steve",
-        "date": 1530877799616,
-        "createdAt": 1530877799616,
-        "updatedAt": 1530877799616,
-        "rating": "4",
-        "comments": "Joshua Smooklerâ€™s two-year-old ramen shop serves one of the best tonkotsu broths around. Beyond ramen, Mu also offers some high minded plates, like foie gras-stuffed chicken wings, as well as dry-aged Japanese Wagyu beef specials. Mu is just 10 short minutes away from Midtown via the 7-train.",
-        "id": 80
+        "restaurant_id": "5",
+        "name": "eren",
+        "date": 1531602546861,
+        "createdAt": 1531602546861,
+        "updatedAt": 1531602546861,
+        "rating": "3",
+        "comments": "eren",
+        "id": 135
       },
       {
-        "restaurant_id": "9",
-        "name": "Brittany",
-        "date": 1530877925627,
-        "createdAt": 1530877925627,
-        "updatedAt": 1530877925627,
-        "rating": "4",
-        "comments": "Overall, I would definitely recommend this place if you enjoy thick curly noodles with a thick, intense broth.  If you don't there are still other options but I can't vouch for those.",
-        "id": 81
-      },
-      {
-        "restaurant_id": "9",
-        "name": "Sally",
-        "date": 1530878023853,
-        "createdAt": 1530878023853,
-        "updatedAt": 1530878023853,
-        "rating": "4",
-        "comments": "One of the tastiest and most unique ramen places I've been to in NYC, but also the priciest. I think overall its worth the try. Not an everyday casual ramen shop though.",
-        "id": 82
-      },
-      {
-        "restaurant_id": "9",
-        "name": "Sally",
-        "date": 1530878073817,
-        "createdAt": 1530878073817,
-        "updatedAt": 1530878073817,
-        "rating": "4",
-        "comments": "One of the tastiest and most unique ramen places I've been to in NYC, but also the priciest. I think overall its worth the try. Not an everyday casual ramen shop though.",
-        "id": 83
+        "restaurant_id": "5",
+        "name": "last",
+        "date": 1531684747937,
+        "createdAt": 1531684747937,
+        "updatedAt": 1531684747937,
+        "rating": "3",
+        "comments": "last",
+        "id": 136
       },
       {
         "restaurant_id": "6",
+        "name": "off1",
+        "date": 1531753221744,
+        "createdAt": 1531753221744,
+        "updatedAt": 1531753221744,
+        "rating": "1",
+        "comments": "off1",
+        "id": 148
+      },
+      {
+        "restaurant_id": "5",
+        "name": "f",
+        "date": 1531753277126,
+        "createdAt": 1531753277127,
+        "updatedAt": 1531753277127,
+        "rating": "3",
+        "comments": "f",
+        "id": 138
+      },
+      {
+        "restaurant_id": "4",
+        "name": "Steve",
+        "date": 1531774944972,
+        "createdAt": 1531774944972,
+        "updatedAt": 1531774944972,
+        "rating": "5",
+        "comments": "In 127 years, little has changed at Katz's. It remains one of New York's â€” and the country's â€” essential Jewish delicatessens. Every inch of the massive Lower East Side space smells intensely of pastrami and rye loaves. The sandwiches are massive, so they are best when shared. Order at the counter, and don't forget to tip your slicer â€” your sandwich will be better for it.",
+        "id": 150
+      },
+      {
+        "restaurant_id": "4",
+        "name": "Allen",
+        "date": 1531775007594,
+        "createdAt": 1531775007594,
+        "updatedAt": 1531775007594,
+        "rating": "5",
+        "comments": "If I lived in NY and got diabetes from eating here every single time I ate, I would do it over and over and over again just for that first bite. These guys know how to make a sandwich. The heart attack comes free of charge! Came by while I was visiting NYC. First pit-stop when I come back :)!",
+        "id": 151
+      },
+      {
+        "restaurant_id": "4",
+        "name": "David",
+        "date": 1531775041032,
+        "createdAt": 1531775041032,
+        "updatedAt": 1531775041032,
+        "rating": "2",
+        "comments": "Ok so four of us came. One more later who didn't order becauase it's so expensive and simple. Seriously, a bunch of meat albeit you can sample beforehand on rye/white/wheat bread. Cheese extra. Pickles free, you can just ask them at the pickup counter. But seriously 20 bucks gone for an non-flavored half sandwich. And a line that is long, especially if you want seating. I'm down to just take a quick look where Sally and Harry sat and leave to the other delis all around NYC. Oh and they accept Samsung pay.",
+        "id": 152
+      },
+      {
+        "restaurant_id": "4",
         "name": "eren",
-        "date": 1531223102986,
-        "createdAt": 1531223102986,
-        "updatedAt": 1531223102986,
+        "date": 1531775133493,
+        "createdAt": 1531775133493,
+        "updatedAt": 1531775133493,
         "rating": "4",
-        "comments": "nice bbq",
-        "id": 84
+        "comments": "good restaurant",
+        "id": 153
       }
     ]
   },
@@ -694,7 +677,7 @@
       "id": 10
     },
     "reviews": {
-      "id": 84
+      "id": 153
     }
   }
 }

@@ -1,6 +1,5 @@
 console.log('mainRestaurants.js');
 
-
 changeFavRestaurantBorder = (is_fav, listNumber) => {
 
   let favRestaurant = document.querySelectorAll('#restaurants-list li');
@@ -47,8 +46,6 @@ createRestaurantHTML = (restaurant,callback) => {
   more.href = DBHelper.urlForRestaurant(restaurant);
   li.append(more);
   const fav = document.createElement('span');
-  /*const info = document.createElement('p');
-  info.id = 'info' + restaurant.id;*/
   fav.id = 'fav' + restaurant.id;
 
   // control favorite status of restaurant
@@ -57,13 +54,10 @@ createRestaurantHTML = (restaurant,callback) => {
     if(response == true) {
       console.log('in iffffff',restaurant.id );
       changeFavRestaurantBorder(true, restaurant.id-1);
-     /* info.innerHTML = "Your Favorite";
-      info.className = 'checked';*/
+
       fav.className='fa fa-star checked';
     } else {
     console.log('in elseeeeee',restaurant.id );
-    /* info.innerHTML = "Mark as Favorite";
-     info.className = '';*/
 
     fav.className='fa fa-star';
     }
@@ -92,8 +86,6 @@ createRestaurantHTML = (restaurant,callback) => {
  * Update restaurants when selected.
  */
 updateSelectedRestaurants = () => {
-    console.log('updateSelectedRestaurants');
-
   const cSelect = document.getElementById('cuisines-select');
   const nSelect = document.getElementById('neighborhoods-select');
   const cIndex = cSelect.selectedIndex;

@@ -5,7 +5,7 @@ initIDB = () => {
   if(!('indexedDB' in window)) {
      console.log('This browser doesnt support idb');
   }
-  return idb.open('restaurant-app', 2, function(upgradeDb) {
+  return idb.open('restaurant-app', 3, function(upgradeDb) {
     switch (upgradeDb.oldVersion) {
       case 0:
         console.log('Creating the restaurants object store');
@@ -17,9 +17,14 @@ initIDB = () => {
         console.log('Creating restaurant id index');
         var store = upgradeDb.transaction.objectStore('reviews');
         store.createIndex('restaurant_id', 'restaurant_id');
+      case 3:
+        console.log('Creating the reviews object store');
+        upgradeDb.createObjectStore('reviews_offline', {keyPath: 'id'});
       }
+
   });
 }
+
 /**
  * Common database helper functions.
  */
@@ -70,20 +75,22 @@ class DBHelper {
    * Fetch reviews by id.
    */
   static fetchReviews(id, callback)  {//http://localhost:1337/reviews/?restaurant_id=<restaurant_id>
-
-  initIDB().then(db =>  {
+    console.log('fetch Reviews',id);
+   initIDB().then(db =>  {
 
     if(!db) return;
 
+    let num = Number(id);
     var tx = db.transaction('reviews', 'readwrite');
     var store = tx.objectStore('reviews');
     var index = store.index('restaurant_id');
 
-    let num = Number(id);
     index.getAll(num).then(items => {
 
+      console.log('items',items);
       if(items.length > 0 ) {
 
+        items.restaurant_id = Number(items.restaurant_id);
         self.restaurant.reviews = items;
         callback(null, self.restaurant.reviews);
 
@@ -94,12 +101,15 @@ class DBHelper {
            return response.json();
 
             }).then(response => {
+              console.log('response',response);
+              //response.restaurant_id = Number(response.restaurant_id);
+              console.log('aftr response',response);
 
               var tx_review = db.transaction('reviews', 'readwrite');
               var store_review = tx_review.objectStore('reviews');
 
               response.forEach((item) => {
-
+                item.restaurant_id = Number(item.restaurant_id);
                 store_review.put(item);
 
               });

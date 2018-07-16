@@ -117,6 +117,7 @@ fillReviewsHTML = (reviews, callback) => {
   let id = getParameterByName('id');
 
   DBHelper.fetchReviews(id, (error, reviews) => {
+
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h3');
   title.innerHTML = 'Reviews';
@@ -133,6 +134,7 @@ fillReviewsHTML = (reviews, callback) => {
   const ul = document.getElementById('reviews-list');
 
   reviews.forEach(review => {
+    review.restaurant_id = Number(review.restaurant_id);
     ul.appendChild(createReviewHTML(review));
   });
   container.appendChild(ul);
@@ -144,7 +146,7 @@ fillReviewsHTML = (reviews, callback) => {
  * Create review HTML and add it to the webpage.
  */
 createReviewHTML = (review) => {
-
+  console.log('createReviewHTML', review);
   const li = document.createElement('li');
   const name = document.createElement('p');
   name.innerHTML = review.name;
@@ -332,6 +334,50 @@ createNewReviewHTML = (review) => {
 }
 
 /**
+ * Handle offline review.
+ */
+let OfflineReviewAdded = false;
+let lastid = 0;
+
+offlineReview = (data) => {
+  initIDB().then((db) =>  {
+          if(!db) return;
+
+    var tx_id = db.transaction('reviews', 'readwrite');
+    var store_id = tx_id.objectStore('reviews');
+    var index = store_id.index('restaurant_id');
+    let id = getParameterByName('id');
+    id = parseInt(id,10);
+        //choose id for offline review. prevent same or lesser ids of present reviews.
+
+    index.getAll(id).then(items => {
+      let length = items.length;
+      let lastid = items[length-1].id;
+      console.log('lastid', lastid);
+      console.log('in init db offline',data,lastid);
+      //add id to data(new review)
+      data.id = lastid+1;
+
+
+      return lastid;
+    }).then((lastid) => {
+    console.log('data after lastid promise', lastid, data);
+    var tx_offline = db.transaction('reviews_offline', 'readwrite');
+    var store_offline = tx_offline.objectStore('reviews_offline');
+
+    store_offline.add(data);
+    //store offline review into the array.
+    //offlineReviews.push(data);
+  }).then(rq => {
+    console.log('rq',rq);
+
+    OfflineReviewAdded = true;
+
+  }).catch(error => console.log(error));
+});
+}
+
+/**
  * Send review to server and idb.
  */
  sendReview = () => {
@@ -339,15 +385,16 @@ createNewReviewHTML = (review) => {
   let id = (getParameterByName('id'));
   id = parseInt(id,10);
 
+
   data =  {
     //"id": lastID,
-    "restaurant_id": id,
-    "name":username,
-    "date" : Date.now(),
-    "createdAt": Date.now(),
-    "updatedAt": Date.now(),
-    "rating": rating,
-    "comments": review
+    restaurant_id: id,
+    name:username,
+    date : Date.now(),
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    rating: rating,
+    comments: review
     };
 
   fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`, {
@@ -359,46 +406,128 @@ createNewReviewHTML = (review) => {
     }
 
   }).then(res => {
-    console.log('response status:', res.status);
+    let status = res.status;
+    console.log('response status:', res);
     return res.json();
 
   })
-    .catch(error => console.error('Error:', error))
+    .catch((error) => {
+      console.error('Error in offline event:', error);
+    })
 
     .then(response => {
 
-      console.log('Success:', response.restaurant_id);
+      console.log('Success:', response);
+      //check online status
+      if(navigator.onLine) {
+        console.log('onLine');
+        //turn string to number for proper storage.
+        response.restaurant_id = id;
 
-      //turn string to number for proper storage.
-      response.restaurant_id = id;
 
-      //add new review to db.
-      initIDB().then((db) =>  {
+        //add new review to db.
+        initIDB().then((db) =>  {
 
-      console.log('in init db after review added');
+        console.log('in init db after review added online');
 
-      if(!db) return;
+        if(!db) return;
 
-      var tx = db.transaction('reviews', 'readwrite');
-      var store = tx.objectStore('reviews');
+        var tx = db.transaction('reviews', 'readwrite');
+        var store = tx.objectStore('reviews');
 
-      store.put(response);
+        store.put(response);
 
-      });
+        });
+        closeWindow();
 
-      closeWindow();
-      //add new review to page
-      const container = document.getElementById('reviews-container');
+        //add new review to page
+        const container = document.getElementById('reviews-container');
 
-      const ul = document.getElementById('reviews-list');
+        const ul = document.getElementById('reviews-list');
 
-      ul.appendChild(createNewReviewHTML(response));
+        ul.appendChild(createNewReviewHTML(response));
 
-      container.appendChild(ul);
+        container.appendChild(ul);
+
+      }
+      else {
+        console.log('offline');
+        //offline review send to the db.
+        offlineReview(data);
+
+        closeWindow();
+        //add new review to page
+        const container = document.getElementById('reviews-container');
+
+        const ul = document.getElementById('reviews-list');
+
+        ul.appendChild(createNewReviewHTML(data));
+
+        container.appendChild(ul);
+
+      }
 
   });
 }
-/*for( let i = 57 ; i < 71 ; i++) {
+let offlineReviews = [];
+
+window.addEventListener('online', (e) => {
+
+  if(OfflineReviewAdded) {
+    let id = getParameterByName('id');
+    id = parseInt(id,10);
+
+    initIDB().then((db) => {
+    let num = Number(id);
+
+      if(!db) return;
+        var tx = db.transaction('reviews_offline', 'readwrite');
+        var store = tx.objectStore('reviews_offline');
+        return store.openCursor();
+      }).then(show = (cursor) => {
+        if (!cursor) {return;}
+        let item = cursor.value;
+        offlineReviews.push(item);
+        console.log('cursor',cursor);
+        fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`, {
+
+        method: 'POST',
+        body: JSON.stringify(item),
+        headers:{
+        'Content-Type': 'application/json'
+        }
+      });
+        return cursor.continue().then(show);
+
+      }).then(res => {
+
+        //add new review to db.
+        initIDB().then((db) =>  {
+        if(!db) return;
+        console.log('in init db after review added online');
+                console.log(offlineReviews);
+
+        offlineReviews.forEach(e =>  {
+          console.log('item',e);
+          var tx = db.transaction('reviews', 'readwrite');
+          var store = tx.objectStore('reviews');
+
+          store.add(e);
+        });
+
+        offlineReviews = [];
+
+        });
+
+        });
+      OfflineReviewAdded = false;
+  }
+
+});
+//delete review
+/*
+for( let i =72 ; i <73; i++) {
+ //let i=71;
  fetch(`http://localhost:1337/reviews/${i}`, {
   method: 'DELETE',
   headers:{
