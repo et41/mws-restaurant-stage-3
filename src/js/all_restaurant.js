@@ -5,7 +5,7 @@ initIDB = () => {
   if(!('indexedDB' in window)) {
      console.log('This browser doesnt support idb');
   }
-  return idb.open('restaurant-app', 2, function(upgradeDb) {
+  return idb.open('restaurant-app', 3, function(upgradeDb) {
     switch (upgradeDb.oldVersion) {
       case 0:
         console.log('Creating the restaurants object store');
@@ -17,21 +17,24 @@ initIDB = () => {
         console.log('Creating restaurant id index');
         var store = upgradeDb.transaction.objectStore('reviews');
         store.createIndex('restaurant_id', 'restaurant_id');
+      case 3:
+        console.log('Creating the reviews object store');
+        upgradeDb.createObjectStore('reviews_offline', {keyPath: 'id'});
       }
+
   });
 }
+
 /**
  * Common database helper functions.
  */
 let res = {};
-console.log('db helper');
 class DBHelper {
 
   /**
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
-  console.log('FETCH RESTAURANT!!!!');
 
   initIDB().then(function(db) {
   if(!db) return;
@@ -40,28 +43,23 @@ class DBHelper {
   store.getAll().then(items => {
 
     if(items.length > 0) {
-      console.log('get data from db!!',items);
       res.restaurants = items;
       const restaurants = res.restaurants;
       //console.log('ressss:',items);
       callback(null, restaurants);
     }else {
-      console.log('get data from server!!');
       fetch(`http://localhost:1337/restaurants`).then(response => {
       return response.json();
       }).then(response => {
 
       res.restaurants = response;
       const restaurants = res.restaurants;
-      console.log('rrestaurant in fetch event : ', restaurants);
       var tx = db.transaction('restaurants', 'readwrite');
       var store = tx.objectStore('restaurants');
       restaurants.forEach((item) => {
-        console.log('Adding item', item);
         store.put(item);
       })
       store.getAll().then(data => {
-        console.log('data',data);
         callback(null, restaurants);
       })
     }).catch(error => {
@@ -71,72 +69,60 @@ class DBHelper {
   })
 });
 
-
   }
-/*return dbPromise.then(function(db) {
-  var tx = db.transaction('products', 'readonly');
-  var store = tx.objectStore('products');
-  var index = store.index('name');
-  return index.get(key);
-});*/
-static fetchReviews(id, callback)  {//http://localhost:1337/reviews/?restaurant_id=<restaurant_id>
 
-initIDB().then(db =>  {
+   /**
+   * Fetch reviews by id.
+   */
+  static fetchReviews(id, callback)  {//http://localhost:1337/reviews/?restaurant_id=<restaurant_id>
+    console.log('fetch Reviews',id);
+   initIDB().then(db =>  {
 
-  console.log('initDB fetchReviews',db,id);
+    if(!db) return;
 
-  if(!db) return;
+    let num = Number(id);
+    var tx = db.transaction('reviews', 'readwrite');
+    var store = tx.objectStore('reviews');
+    var index = store.index('restaurant_id');
 
-  var tx = db.transaction('reviews', 'readwrite');
-  var store = tx.objectStore('reviews');
-  var index = store.index('restaurant_id');
-  //console.log('index......', index.get(key));
+    index.getAll(num).then(items => {
 
-  let num = Number(id);
-  index.getAll(num).then(items => {
-    console.log('get data from fetchdb before i!!',items.restaurant_id);
+      console.log('items',items);
+      if(items.length > 0 ) {
 
-    if(items.length > 0 ) {
-     items.filter((e) => {
-      console.log('e.restaurant_id',e.restaurant_id);
-        if(e.restaurant_id == num) {
-          return e;
-        }
-      });
-      console.log('get data from fetchdb!!',items);
-      self.restaurant.reviews = items;
-      callback(null, self.restaurant.reviews);
+        items.restaurant_id = Number(items.restaurant_id);
+        self.restaurant.reviews = items;
+        callback(null, self.restaurant.reviews);
 
-    }else {
+      }else {
 
-      console.log('get data from server!!');
-      return fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`).then(response => {
+        return fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`).then(response => {
 
-         return response.json();
+           return response.json();
 
-          }).then(response => {
-            console.log('response in fetch reviews by id', response );
-            var tx_review = db.transaction('reviews', 'readwrite');
-            var store_review = tx_review.objectStore('reviews');
+            }).then(response => {
+              console.log('response',response);
+              //response.restaurant_id = Number(response.restaurant_id);
+              console.log('aftr response',response);
 
-            response.forEach((item) => {
-            //console.log('Adding item', item);
-              store_review.put(item);
+              var tx_review = db.transaction('reviews', 'readwrite');
+              var store_review = tx_review.objectStore('reviews');
+
+              response.forEach((item) => {
+                item.restaurant_id = Number(item.restaurant_id);
+                store_review.put(item);
+
+              });
+
+              self.restaurant.reviews = response;
+              callback(null, self.restaurant.reviews);
 
             });
-
-            self.restaurant.reviews = response;
-            callback(null, self.restaurant.reviews);
-          });
-
+          }
+        });
+     });
     }
 
-
-  });
-
-
-  });
-}
   /**
    * Map marker for a restaurant.
    */
@@ -166,6 +152,25 @@ initIDB().then(db =>  {
           callback('Restaurant does not exist', null);
         }
       }
+    });
+  }
+
+static controlFav(id )  {
+  return fetch(`http://localhost:1337/restaurants/${id}/`,
+   {
+
+    method: 'GET',
+    headers:{
+      'Content-Type': 'application/json'
+    }
+
+  }).then(res => {
+    console.log('response status:', res);
+    return res.json();
+
+  }).then(response => {
+    console.log('response status:', response.is_favorite);
+    return response.is_favorite;
     });
   }
 
@@ -269,36 +274,8 @@ initIDB().then(db =>  {
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    console.log('restaurant in image url', restaurant);
     return (`/img/${restaurant.photograph}`);
   }
-
-
-  /*
-    "reviews": [{
-        "name": "Steve",
-        "date": "October 26, 2016",
-        "rating": 4,
-        "comments": "Mission Chinese Food has grown up from its scrappy Orchard Street days into a big, two story restaurant equipped with a pizza oven, a prime rib cart, and a much broader menu. Yes, it still has all the hits — the kung pao pastrami, the thrice cooked bacon —but chef/proprietor Danny Bowien and executive chef Angela Dimayuga have also added a raw bar, two generous family-style set menus, and showstoppers like duck baked in clay. And you can still get a lot of food without breaking the bank."
-      },
-      {
-        "name": "Morgan",
-        "date": "October 26, 2016",
-        "rating": 4,
-        "comments": "This place is a blast. Must orders: GREEN TEA NOODS, sounds gross (to me at least) but these were incredible!, Kung pao pastrami (but you already knew that), beef tartare was a fun appetizer that we decided to try, the spicy ma po tofu SUPER spicy but delicous, egg rolls and scallion pancake i could have passed on... I wish we would have gone with a larger group, so much more I would have liked to try!"
-      },
-      {
-        "name": "Jason",
-        "date": "October 26, 2016",
-        "rating": 3,
-        "comments": "I was VERY excited to come here after seeing and hearing so many good things about this place. Having read much, I knew going into it that it was not going to be authentic Chinese. The place was edgy, had a punk rock throwback attitude, and generally delivered the desired atmosphere. Things went downhill from there though. The food was okay at best and the best qualities were easily overshadowed by what I believe to be poor decisions by the kitchen staff."
-      }
-    ]
-  }
-
-
-
-  */
 
 }
 
@@ -353,7 +330,6 @@ getParameterByName = (name, url) => {
  * Get current restaurant from page URL.
  */
 fetchRestaurantFromURL = (callback) => {
-  //console.log('fetchRestaurantFromURL');
   if (self.restaurant) { // restaurant already fetched!
     callback(null, self.restaurant)
     return;
@@ -364,7 +340,6 @@ fetchRestaurantFromURL = (callback) => {
     callback(error, null);
   } else {
     DBHelper.fetchRestaurantById(id, (error, restaurant) => {
-      //console.log('restaurant in DBHelper.fetchRestaurantById', restaurant);
       self.restaurant = restaurant;
       if (!restaurant) {
         console.error(error);
@@ -380,7 +355,6 @@ fetchRestaurantFromURL = (callback) => {
  * Create restaurant HTML and add it to the webpage
  */
 fillRestaurantHTML = (restaurant = self.restaurant) => {
-  //console.log('fillRestaurantHTML');
   const name = document.getElementById('restaurant-name');
   name.innerHTML = restaurant.name;
 
@@ -434,10 +408,9 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 fillReviewsHTML = (reviews, callback) => {
 
   let id = getParameterByName('id');
-  console.log('reviews in fillReviewsHTML 1', reviews);
 
   DBHelper.fetchReviews(id, (error, reviews) => {
-  console.log('reviews in fillReviewsHTML 2', reviews);
+
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h3');
   title.innerHTML = 'Reviews';
@@ -454,6 +427,7 @@ fillReviewsHTML = (reviews, callback) => {
   const ul = document.getElementById('reviews-list');
 
   reviews.forEach(review => {
+    review.restaurant_id = Number(review.restaurant_id);
     ul.appendChild(createReviewHTML(review));
   });
   container.appendChild(ul);
@@ -465,7 +439,7 @@ fillReviewsHTML = (reviews, callback) => {
  * Create review HTML and add it to the webpage.
  */
 createReviewHTML = (review) => {
-  //console.log('createReviewHTML');
+  console.log('createReviewHTML', review);
   const li = document.createElement('li');
   const name = document.createElement('p');
   name.innerHTML = review.name;
@@ -474,24 +448,24 @@ createReviewHTML = (review) => {
   //add tabindex
   name.setAttribute('tabindex', '0');
   li.appendChild(name);
+
+  //adjust time.
   const monthNames = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
   ];
-
   let d =review.createdAt;
-
-
   var dt = new Date(d);
   date_data = `${dt.getMonth()} ${monthNames[dt.getMonth()]}, ${dt.getFullYear()} `
-
   const date = document.createElement('p');
 
-
   date.innerHTML = date_data;
+
   //add id to review date.
   date.setAttribute('id', 'date' + review.name);
+
   //add tabindex
   date.setAttribute('tabindex', '0');
+
   li.appendChild(date);
 
   const rating = document.createElement('p');
@@ -513,7 +487,6 @@ createReviewHTML = (review) => {
  * Add restaurant name to the breadcrumb navigation menu
  */
 fillBreadcrumb = (restaurant=self.restaurant) => {
-  //console.log('fillBreadcrumb:');
   const breadcrumb = document.getElementById('breadcrumb-ol');
   const li = document.createElement('li');
   li.innerHTML = restaurant.name;
@@ -525,7 +498,6 @@ fillBreadcrumb = (restaurant=self.restaurant) => {
  * Manage focus in restaurant container part
  */
 document.addEventListener('keyup', (e) => {
- // console.log('e review: ' , e);
   let keyonElement = e.srcElement.id;
   const TABKEY = 9;
   if(e.keyCode == TABKEY) {
@@ -553,6 +525,22 @@ addReview = () => {
 
   let breadcrumb = document.getElementById('breadcrumb');
   breadcrumb.style.opacity = "0.5";
+
+}
+
+/**
+ * Close review window
+ */
+closeWindow = () => {
+
+  let rev = document.getElementById('form');
+  rev.style.left = "-100%";
+
+  let main = document.getElementById('maincontent');
+  main.style.opacity = "1";
+
+  let breadcrumb = document.getElementById('breadcrumb');
+  breadcrumb.style.opacity = "1";
 
 }
 
@@ -593,35 +581,11 @@ inputReview.addEventListener('keyup', () => {
   console.log('review', review);
 });
 
-let lastID;
-
-/*fetch(`http://localhost:1337/reviews`).then(response => {
-  return response.json();
-  }).then(response => {
-  lastID = response[response.length-1].id;
-
-
-});*/
-
 /**
- * Close review window
+ * Add new review to page.
  */
-closeWindow = () => {
-
-  let rev = document.getElementById('form');
-  rev.style.left = "-100%";
-
-  let main = document.getElementById('maincontent');
-  main.style.opacity = "1";
-
-  let breadcrumb = document.getElementById('breadcrumb');
-  breadcrumb.style.opacity = "1";
-
-}
-
 createNewReviewHTML = (review) => {
 
-  console.log('createNewReviewHTML',review);
   const li = document.createElement('li');
   const name = document.createElement('p');
   name.innerHTML = review.name;
@@ -663,43 +627,201 @@ createNewReviewHTML = (review) => {
 }
 
 /**
- * Send review to server.
+ * Handle offline review.
+ */
+let OfflineReviewAdded = false;
+let lastid = 0;
+
+offlineReview = (data) => {
+  initIDB().then((db) =>  {
+          if(!db) return;
+
+    var tx_id = db.transaction('reviews', 'readwrite');
+    var store_id = tx_id.objectStore('reviews');
+    var index = store_id.index('restaurant_id');
+    let id = getParameterByName('id');
+    id = parseInt(id,10);
+        //choose id for offline review. prevent same or lesser ids of present reviews.
+
+    index.getAll(id).then(items => {
+      let length = items.length;
+      let lastid = items[length-1].id;
+      console.log('lastid', lastid);
+      console.log('in init db offline',data,lastid);
+      //add id to data(new review)
+      data.id = lastid+1;
+
+
+      return lastid;
+    }).then((lastid) => {
+    console.log('data after lastid promise', lastid, data);
+    var tx_offline = db.transaction('reviews_offline', 'readwrite');
+    var store_offline = tx_offline.objectStore('reviews_offline');
+
+    store_offline.add(data);
+    //store offline review into the array.
+    //offlineReviews.push(data);
+  }).then(rq => {
+    console.log('rq',rq);
+
+    OfflineReviewAdded = true;
+
+  }).catch(error => console.log(error));
+});
+}
+
+/**
+ * Send review to server and idb.
  */
  sendReview = () => {
-  console.log('in send review',username, rating, review);
+
+  let id = (getParameterByName('id'));
+  id = parseInt(id,10);
+
+
   data =  {
     //"id": lastID,
-    "restaurant_id": getParameterByName('id'),
-    "name":username,
-    "date" : Date.now(),
-    "createdAt": Date.now(),
-    "updatedAt": Date.now(),
-    "rating": rating,
-    "comments": review
-  };
-  fetch(`http://localhost:1337/reviews`, {
+    restaurant_id: id,
+    name:username,
+    date : Date.now(),
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    rating: rating,
+    comments: review
+    };
+
+  fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`, {
+
     method: 'POST',
     body: JSON.stringify(data),
     headers:{
       'Content-Type': 'application/json'
     }
-  }).then(res => res.json())
-  .catch(error => console.error('Error:', error))
-  .then(response => {
-  console.log('Success:', response);
-  closeWindow();
-  const container = document.getElementById('reviews-container');
 
-  const ul = document.getElementById('reviews-list');
+  }).then(res => {
+    let status = res.status;
+    console.log('response status:', res);
+    return res.json();
 
-  ul.appendChild(createNewReviewHTML(response));
+  })
+    .catch((error) => {
+      console.error('Error in offline event:', error);
+    })
 
-  container.appendChild(ul);
+    .then(response => {
+
+      console.log('Success:', response);
+      //check online status
+      if(navigator.onLine) {
+        console.log('onLine');
+        //turn string to number for proper storage.
+        response.restaurant_id = id;
+
+
+        //add new review to db.
+        initIDB().then((db) =>  {
+
+        console.log('in init db after review added online');
+
+        if(!db) return;
+
+        var tx = db.transaction('reviews', 'readwrite');
+        var store = tx.objectStore('reviews');
+
+        store.put(response);
+
+        });
+        closeWindow();
+
+        //add new review to page
+        const container = document.getElementById('reviews-container');
+
+        const ul = document.getElementById('reviews-list');
+
+        ul.appendChild(createNewReviewHTML(response));
+
+        container.appendChild(ul);
+
+      }
+      else {
+        console.log('offline');
+        //offline review send to the db.
+        offlineReview(data);
+
+        closeWindow();
+        //add new review to page
+        const container = document.getElementById('reviews-container');
+
+        const ul = document.getElementById('reviews-list');
+
+        ul.appendChild(createNewReviewHTML(data));
+
+        container.appendChild(ul);
+
+      }
 
   });
 }
+let offlineReviews = [];
 
-/*  fetch(`http://localhost:1337/reviews/56`, {
+window.addEventListener('online', (e) => {
+
+  if(OfflineReviewAdded) {
+    let id = getParameterByName('id');
+    id = parseInt(id,10);
+
+    initIDB().then((db) => {
+    let num = Number(id);
+
+      if(!db) return;
+        var tx = db.transaction('reviews_offline', 'readwrite');
+        var store = tx.objectStore('reviews_offline');
+        return store.openCursor();
+      }).then(show = (cursor) => {
+        if (!cursor) {return;}
+        let item = cursor.value;
+        offlineReviews.push(item);
+        console.log('cursor',cursor);
+        fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`, {
+
+        method: 'POST',
+        body: JSON.stringify(item),
+        headers:{
+        'Content-Type': 'application/json'
+        }
+      });
+        return cursor.continue().then(show);
+
+      }).then(res => {
+
+        //add new review to db.
+        initIDB().then((db) =>  {
+        if(!db) return;
+        console.log('in init db after review added online');
+                console.log(offlineReviews);
+
+        offlineReviews.forEach(e =>  {
+          console.log('item',e);
+          var tx = db.transaction('reviews', 'readwrite');
+          var store = tx.objectStore('reviews');
+
+          store.add(e);
+        });
+
+        offlineReviews = [];
+
+        });
+
+        });
+      OfflineReviewAdded = false;
+  }
+
+});
+//delete review
+/*
+for( let i =72 ; i <73; i++) {
+ //let i=71;
+ fetch(`http://localhost:1337/reviews/${i}`, {
   method: 'DELETE',
   headers:{
     'Content-Type': 'application/json'
@@ -710,9 +832,9 @@ createNewReviewHTML = (review) => {
 
 })
 .catch(error => console.error('Error:', error));
+}
 
 */
-
 
 let breadcrumbCounter = 0;
 
@@ -744,7 +866,6 @@ var coll = document.getElementsByClassName("collapsible");
 var i;
 
 for (i = 0; i < coll.length; i++) {
-	console.log('collapsable');
   coll[i].addEventListener("click", function() {
     this.classList.toggle("active");
     var content = this.nextElementSibling;

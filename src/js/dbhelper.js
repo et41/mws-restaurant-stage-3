@@ -5,7 +5,7 @@ initIDB = () => {
   if(!('indexedDB' in window)) {
      console.log('This browser doesnt support idb');
   }
-  return idb.open('restaurant-app', 2, function(upgradeDb) {
+  return idb.open('restaurant-app', 3, function(upgradeDb) {
     switch (upgradeDb.oldVersion) {
       case 0:
         console.log('Creating the restaurants object store');
@@ -17,21 +17,24 @@ initIDB = () => {
         console.log('Creating restaurant id index');
         var store = upgradeDb.transaction.objectStore('reviews');
         store.createIndex('restaurant_id', 'restaurant_id');
+      case 3:
+        console.log('Creating the reviews object store');
+        upgradeDb.createObjectStore('reviews_offline', {keyPath: 'id'});
       }
+
   });
 }
+
 /**
  * Common database helper functions.
  */
 let res = {};
-console.log('db helper');
 class DBHelper {
 
   /**
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
-  console.log('FETCH RESTAURANT!!!!');
 
   initIDB().then(function(db) {
   if(!db) return;
@@ -40,28 +43,23 @@ class DBHelper {
   store.getAll().then(items => {
 
     if(items.length > 0) {
-      console.log('get data from db!!',items);
       res.restaurants = items;
       const restaurants = res.restaurants;
       //console.log('ressss:',items);
       callback(null, restaurants);
     }else {
-      console.log('get data from server!!');
       fetch(`http://localhost:1337/restaurants`).then(response => {
       return response.json();
       }).then(response => {
 
       res.restaurants = response;
       const restaurants = res.restaurants;
-      console.log('rrestaurant in fetch event : ', restaurants);
       var tx = db.transaction('restaurants', 'readwrite');
       var store = tx.objectStore('restaurants');
       restaurants.forEach((item) => {
-        console.log('Adding item', item);
         store.put(item);
       })
       store.getAll().then(data => {
-        console.log('data',data);
         callback(null, restaurants);
       })
     }).catch(error => {
@@ -71,72 +69,60 @@ class DBHelper {
   })
 });
 
-
   }
-/*return dbPromise.then(function(db) {
-  var tx = db.transaction('products', 'readonly');
-  var store = tx.objectStore('products');
-  var index = store.index('name');
-  return index.get(key);
-});*/
-static fetchReviews(id, callback)  {//http://localhost:1337/reviews/?restaurant_id=<restaurant_id>
 
-initIDB().then(db =>  {
+   /**
+   * Fetch reviews by id.
+   */
+  static fetchReviews(id, callback)  {//http://localhost:1337/reviews/?restaurant_id=<restaurant_id>
+    console.log('fetch Reviews',id);
+   initIDB().then(db =>  {
 
-  console.log('initDB fetchReviews',db,id);
+    if(!db) return;
 
-  if(!db) return;
+    let num = Number(id);
+    var tx = db.transaction('reviews', 'readwrite');
+    var store = tx.objectStore('reviews');
+    var index = store.index('restaurant_id');
 
-  var tx = db.transaction('reviews', 'readwrite');
-  var store = tx.objectStore('reviews');
-  var index = store.index('restaurant_id');
-  //console.log('index......', index.get(key));
+    index.getAll(num).then(items => {
 
-  let num = Number(id);
-  index.getAll(num).then(items => {
-    console.log('get data from fetchdb before i!!',items.restaurant_id);
+      console.log('items',items);
+      if(items.length > 0 ) {
 
-    if(items.length > 0 ) {
-     items.filter((e) => {
-      console.log('e.restaurant_id',e.restaurant_id);
-        if(e.restaurant_id == num) {
-          return e;
-        }
-      });
-      console.log('get data from fetchdb!!',items);
-      self.restaurant.reviews = items;
-      callback(null, self.restaurant.reviews);
+        items.restaurant_id = Number(items.restaurant_id);
+        self.restaurant.reviews = items;
+        callback(null, self.restaurant.reviews);
 
-    }else {
+      }else {
 
-      console.log('get data from server!!');
-      return fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`).then(response => {
+        return fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`).then(response => {
 
-         return response.json();
+           return response.json();
 
-          }).then(response => {
-            console.log('response in fetch reviews by id', response );
-            var tx_review = db.transaction('reviews', 'readwrite');
-            var store_review = tx_review.objectStore('reviews');
+            }).then(response => {
+              console.log('response',response);
+              //response.restaurant_id = Number(response.restaurant_id);
+              console.log('aftr response',response);
 
-            response.forEach((item) => {
-            //console.log('Adding item', item);
-              store_review.put(item);
+              var tx_review = db.transaction('reviews', 'readwrite');
+              var store_review = tx_review.objectStore('reviews');
+
+              response.forEach((item) => {
+                item.restaurant_id = Number(item.restaurant_id);
+                store_review.put(item);
+
+              });
+
+              self.restaurant.reviews = response;
+              callback(null, self.restaurant.reviews);
 
             });
-
-            self.restaurant.reviews = response;
-            callback(null, self.restaurant.reviews);
-          });
-
+          }
+        });
+     });
     }
 
-
-  });
-
-
-  });
-}
   /**
    * Map marker for a restaurant.
    */
@@ -166,6 +152,25 @@ initIDB().then(db =>  {
           callback('Restaurant does not exist', null);
         }
       }
+    });
+  }
+
+static controlFav(id )  {
+  return fetch(`http://localhost:1337/restaurants/${id}/`,
+   {
+
+    method: 'GET',
+    headers:{
+      'Content-Type': 'application/json'
+    }
+
+  }).then(res => {
+    console.log('response status:', res);
+    return res.json();
+
+  }).then(response => {
+    console.log('response status:', response.is_favorite);
+    return response.is_favorite;
     });
   }
 
@@ -269,36 +274,8 @@ initIDB().then(db =>  {
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    console.log('restaurant in image url', restaurant);
     return (`/img/${restaurant.photograph}`);
   }
-
-
-  /*
-    "reviews": [{
-        "name": "Steve",
-        "date": "October 26, 2016",
-        "rating": 4,
-        "comments": "Mission Chinese Food has grown up from its scrappy Orchard Street days into a big, two story restaurant equipped with a pizza oven, a prime rib cart, and a much broader menu. Yes, it still has all the hits — the kung pao pastrami, the thrice cooked bacon —but chef/proprietor Danny Bowien and executive chef Angela Dimayuga have also added a raw bar, two generous family-style set menus, and showstoppers like duck baked in clay. And you can still get a lot of food without breaking the bank."
-      },
-      {
-        "name": "Morgan",
-        "date": "October 26, 2016",
-        "rating": 4,
-        "comments": "This place is a blast. Must orders: GREEN TEA NOODS, sounds gross (to me at least) but these were incredible!, Kung pao pastrami (but you already knew that), beef tartare was a fun appetizer that we decided to try, the spicy ma po tofu SUPER spicy but delicous, egg rolls and scallion pancake i could have passed on... I wish we would have gone with a larger group, so much more I would have liked to try!"
-      },
-      {
-        "name": "Jason",
-        "date": "October 26, 2016",
-        "rating": 3,
-        "comments": "I was VERY excited to come here after seeing and hearing so many good things about this place. Having read much, I knew going into it that it was not going to be authentic Chinese. The place was edgy, had a punk rock throwback attitude, and generally delivered the desired atmosphere. Things went downhill from there though. The food was okay at best and the best qualities were easily overshadowed by what I believe to be poor decisions by the kitchen staff."
-      }
-    ]
-  }
-
-
-
-  */
 
 }
 

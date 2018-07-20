@@ -5,7 +5,7 @@ initIDB = () => {
   if(!('indexedDB' in window)) {
      console.log('This browser doesnt support idb');
   }
-  return idb.open('restaurant-app', 2, function(upgradeDb) {
+  return idb.open('restaurant-app', 3, function(upgradeDb) {
     switch (upgradeDb.oldVersion) {
       case 0:
         console.log('Creating the restaurants object store');
@@ -17,21 +17,24 @@ initIDB = () => {
         console.log('Creating restaurant id index');
         var store = upgradeDb.transaction.objectStore('reviews');
         store.createIndex('restaurant_id', 'restaurant_id');
+      case 3:
+        console.log('Creating the reviews object store');
+        upgradeDb.createObjectStore('reviews_offline', {keyPath: 'id'});
       }
+
   });
 }
+
 /**
  * Common database helper functions.
  */
 let res = {};
-console.log('db helper');
 class DBHelper {
 
   /**
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
-  console.log('FETCH RESTAURANT!!!!');
 
   initIDB().then(function(db) {
   if(!db) return;
@@ -40,28 +43,23 @@ class DBHelper {
   store.getAll().then(items => {
 
     if(items.length > 0) {
-      console.log('get data from db!!',items);
       res.restaurants = items;
       const restaurants = res.restaurants;
       //console.log('ressss:',items);
       callback(null, restaurants);
     }else {
-      console.log('get data from server!!');
       fetch(`http://localhost:1337/restaurants`).then(response => {
       return response.json();
       }).then(response => {
 
       res.restaurants = response;
       const restaurants = res.restaurants;
-      console.log('rrestaurant in fetch event : ', restaurants);
       var tx = db.transaction('restaurants', 'readwrite');
       var store = tx.objectStore('restaurants');
       restaurants.forEach((item) => {
-        console.log('Adding item', item);
         store.put(item);
       })
       store.getAll().then(data => {
-        console.log('data',data);
         callback(null, restaurants);
       })
     }).catch(error => {
@@ -71,72 +69,60 @@ class DBHelper {
   })
 });
 
-
   }
-/*return dbPromise.then(function(db) {
-  var tx = db.transaction('products', 'readonly');
-  var store = tx.objectStore('products');
-  var index = store.index('name');
-  return index.get(key);
-});*/
-static fetchReviews(id, callback)  {//http://localhost:1337/reviews/?restaurant_id=<restaurant_id>
 
-initIDB().then(db =>  {
+   /**
+   * Fetch reviews by id.
+   */
+  static fetchReviews(id, callback)  {//http://localhost:1337/reviews/?restaurant_id=<restaurant_id>
+    console.log('fetch Reviews',id);
+   initIDB().then(db =>  {
 
-  console.log('initDB fetchReviews',db,id);
+    if(!db) return;
 
-  if(!db) return;
+    let num = Number(id);
+    var tx = db.transaction('reviews', 'readwrite');
+    var store = tx.objectStore('reviews');
+    var index = store.index('restaurant_id');
 
-  var tx = db.transaction('reviews', 'readwrite');
-  var store = tx.objectStore('reviews');
-  var index = store.index('restaurant_id');
-  //console.log('index......', index.get(key));
+    index.getAll(num).then(items => {
 
-  let num = Number(id);
-  index.getAll(num).then(items => {
-    console.log('get data from fetchdb before i!!',items.restaurant_id);
+      console.log('items',items);
+      if(items.length > 0 ) {
 
-    if(items.length > 0 ) {
-     items.filter((e) => {
-      console.log('e.restaurant_id',e.restaurant_id);
-        if(e.restaurant_id == num) {
-          return e;
-        }
-      });
-      console.log('get data from fetchdb!!',items);
-      self.restaurant.reviews = items;
-      callback(null, self.restaurant.reviews);
+        items.restaurant_id = Number(items.restaurant_id);
+        self.restaurant.reviews = items;
+        callback(null, self.restaurant.reviews);
 
-    }else {
+      }else {
 
-      console.log('get data from server!!');
-      return fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`).then(response => {
+        return fetch(`http://localhost:1337/reviews/?restaurant_id=${id}`).then(response => {
 
-         return response.json();
+           return response.json();
 
-          }).then(response => {
-            console.log('response in fetch reviews by id', response );
-            var tx_review = db.transaction('reviews', 'readwrite');
-            var store_review = tx_review.objectStore('reviews');
+            }).then(response => {
+              console.log('response',response);
+              //response.restaurant_id = Number(response.restaurant_id);
+              console.log('aftr response',response);
 
-            response.forEach((item) => {
-            //console.log('Adding item', item);
-              store_review.put(item);
+              var tx_review = db.transaction('reviews', 'readwrite');
+              var store_review = tx_review.objectStore('reviews');
+
+              response.forEach((item) => {
+                item.restaurant_id = Number(item.restaurant_id);
+                store_review.put(item);
+
+              });
+
+              self.restaurant.reviews = response;
+              callback(null, self.restaurant.reviews);
 
             });
-
-            self.restaurant.reviews = response;
-            callback(null, self.restaurant.reviews);
-          });
-
+          }
+        });
+     });
     }
 
-
-  });
-
-
-  });
-}
   /**
    * Map marker for a restaurant.
    */
@@ -166,6 +152,25 @@ initIDB().then(db =>  {
           callback('Restaurant does not exist', null);
         }
       }
+    });
+  }
+
+static controlFav(id )  {
+  return fetch(`http://localhost:1337/restaurants/${id}/`,
+   {
+
+    method: 'GET',
+    headers:{
+      'Content-Type': 'application/json'
+    }
+
+  }).then(res => {
+    console.log('response status:', res);
+    return res.json();
+
+  }).then(response => {
+    console.log('response status:', response.is_favorite);
+    return response.is_favorite;
     });
   }
 
@@ -269,36 +274,8 @@ initIDB().then(db =>  {
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    console.log('restaurant in image url', restaurant);
     return (`/img/${restaurant.photograph}`);
   }
-
-
-  /*
-    "reviews": [{
-        "name": "Steve",
-        "date": "October 26, 2016",
-        "rating": 4,
-        "comments": "Mission Chinese Food has grown up from its scrappy Orchard Street days into a big, two story restaurant equipped with a pizza oven, a prime rib cart, and a much broader menu. Yes, it still has all the hits — the kung pao pastrami, the thrice cooked bacon —but chef/proprietor Danny Bowien and executive chef Angela Dimayuga have also added a raw bar, two generous family-style set menus, and showstoppers like duck baked in clay. And you can still get a lot of food without breaking the bank."
-      },
-      {
-        "name": "Morgan",
-        "date": "October 26, 2016",
-        "rating": 4,
-        "comments": "This place is a blast. Must orders: GREEN TEA NOODS, sounds gross (to me at least) but these were incredible!, Kung pao pastrami (but you already knew that), beef tartare was a fun appetizer that we decided to try, the spicy ma po tofu SUPER spicy but delicous, egg rolls and scallion pancake i could have passed on... I wish we would have gone with a larger group, so much more I would have liked to try!"
-      },
-      {
-        "name": "Jason",
-        "date": "October 26, 2016",
-        "rating": 3,
-        "comments": "I was VERY excited to come here after seeing and hearing so many good things about this place. Having read much, I knew going into it that it was not going to be authentic Chinese. The place was edgy, had a punk rock throwback attitude, and generally delivered the desired atmosphere. Things went downhill from there though. The food was okay at best and the best qualities were easily overshadowed by what I believe to be poor decisions by the kitchen staff."
-      }
-    ]
-  }
-
-
-
-  */
 
 }
 
@@ -324,12 +301,10 @@ console.log('main.js');
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
-document.addEventListener('DOMContentLoaded', (event) => {
+window.addEventListener('load', (event) => {
   console.log('load');
   fetchNeighborhoods();
   fetchCuisines();
-
-
 });
 
 
@@ -353,7 +328,7 @@ fetchNeighborhoods = () => {
  * Set neighborhoods HTML.
  */
 fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
-    console.log('fillNeighborhoodsHTML');
+  //  console.log('fillNeighborhoodsHTML');
 
   const select = document.getElementById('neighborhoods-select');
   neighborhoods.forEach(neighborhood => {
@@ -365,7 +340,8 @@ fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
 }
 
 initMap = () => {
-  console.log('in init map');
+ // console.log('in init map');
+
   let loc = {
     lat: 40.722216,
     lng: -73.987501
@@ -376,13 +352,13 @@ initMap = () => {
     scrollwheel: false
   });
 
-  addMarkersToMap();
+//  addMarkersToMap();
 }
 /**
  * Fetch all cuisines and set their HTML.
  */
 fetchCuisines = () => {
-  console.log('fetchCuisines');
+//  console.log('fetchCuisines');
   updateRestaurants();
 
   DBHelper.fetchCuisines((error, cuisines) => {
@@ -399,7 +375,7 @@ fetchCuisines = () => {
  * Set cuisines HTML.
  */
 fillCuisinesHTML = (cuisines = self.cuisines) => {
-    console.log('fillCuisinesHTML');
+ //   console.log('fillCuisinesHTML');
 
   const select = document.getElementById('cuisines-select');
 
@@ -454,6 +430,7 @@ var elementCollapsable = document.getElementById('collapsible');
 
 elementCollapsable.addEventListener('click', () => {
   initMap();
+  addMarkersToMap();
 });
 
 
@@ -461,7 +438,7 @@ elementCollapsable.addEventListener('click', () => {
  * Add markers for current restaurants to the map.
  */
 addMarkersToMap = (restaurants = self.restaurants) => {
-  console.log('addMarkersToMap');
+ // console.log('addMarkersToMap');
 
   restaurants.forEach(restaurant => {
     // Add marker to the map
@@ -477,7 +454,7 @@ addMarkersToMap = (restaurants = self.restaurants) => {
  * Clear current restaurants, their HTML and remove their map markers.
  */
 resetRestaurants = (restaurants) => {
-  console.log('resetRestaurants');
+//  console.log('resetRestaurants');
 
   // Remove all restaurants
   self.restaurants = [];
@@ -493,7 +470,7 @@ resetRestaurants = (restaurants) => {
  * Create all restaurants HTML and add them to the webpage.
  */
 fillRestaurantsHTML = (restaurants = self.restaurants) => {
-  console.log('fillRestaurantsHTML');
+ // console.log('fillRestaurantsHTML');
   const ul = document.getElementById('restaurants-list');
   restaurants.forEach(restaurant => {
     ul.append(createRestaurantHTML(restaurant));
@@ -522,14 +499,39 @@ var io = new IntersectionObserver(entries => {
 
 
 
-console.log('mainRestaurants.js');
+//console.log('mainRestaurants.js');
 
+changeFavRestaurantBorder = (is_fav, listNumber) => {
+
+  let favRestaurant = document.querySelectorAll('#restaurants-list li');
+
+  if(is_fav) {
+    console.log('fav', favRestaurant);
+    favRestaurant[listNumber].style.borderColor = '#c22c2c';
+
+  } else {
+    console.log('else', favRestaurant);
+
+    favRestaurant[listNumber].style.borderColor = '#ccc';
+
+  }
+
+}
+
+getRestaurantfavStatus = (id) => {
+  return fetch(`http://localhost:1337/restaurants/${id}`).then(response => {
+    return response.json();
+  }).then(restaurant => {
+  //  console.log('getRestaurantfavStatus',restaurant);
+    return restaurant.is_favorite;
+  });
+}
 
 /**
  * Create restaurant HTML.
  */
 createRestaurantHTML = (restaurant,callback) => {
-  console.log('createRestaurantHTML',restaurant);
+  //console.log('createRestaurantHTML',restaurant);
 
   const li = document.createElement('li');
   io.observe(li);
@@ -554,46 +556,41 @@ createRestaurantHTML = (restaurant,callback) => {
   more.innerHTML = 'View Details';
   more.href = DBHelper.urlForRestaurant(restaurant);
   li.append(more);
-  const button = document.createElement('button');
-  const fav = document.createElement('span');
-  const info = document.createElement('p');
+  const fav = document.createElement('button');
 
-  info.id = 'info' + restaurant.id;
+ // const but = document.createElement('button');
+
   fav.id = 'fav' + restaurant.id;
-
+  fav.innerHTML =' ☆';
   // control favorite status of restaurant
-  DBHelper.controlFav(restaurant.id).then(response => {
-    console.log('response after control fav response', response,restaurant.is_favorite);
-    if(response == true) {
-      console.log('in iffffff',restaurant.id );
-      info.innerHTML = "Your Favorite";
-      info.className = 'checked';
-      fav.className='fa fa-star checked';
-    } else {
-    console.log('in elseeeeee',restaurant.id );
-     info.innerHTML = "Mark as Favorite";
-     info.className = '';
+  //console.log('createRestaurantHTML',restaurant,getRestaurantfavStatus(restaurant.id));
+  getRestaurantfavStatus(restaurant.id).then(status => {
+    if(status){
+      li.style.borderColor = '#c22c2c';
 
-    fav.className='fa fa-star';
+      // fav.className='fa fa-star checked';
+      fav.className='checked';
+    } else {
+      li.style.borderColor = '#ccc';
+      //fav.className='fa fa-star';
+      fav.className='';
     }
   });
-  button.append(fav);
-  fav.append(info);
   li.append(fav);
 
   loadImage = (restaurant, idStr) => {
-  console.log('loadImage,restaurant,idStr', restaurant,idStr);
+ // console.log('loadImage,restaurant,idStr', restaurant,idStr);
   image = document.getElementById(idStr);
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
 
   //add srcset and sizes to make responsive images.
-  image.srcset =  `images/${restaurant.id}-400small.jpg 480w,images/${restaurant.id}-600medium.jpg 600w`;
-  image.sizes =  "(max-width: 600px) 60vw,(min-width: 601px) 50vw";
+  image.srcset =  `images/${restaurant.id}-300small_low.jpg 480w,images/${restaurant.id}-600medium.jpg 600w`;
+  image.sizes =  "(max-width: 600px) 20vw,(min-width: 601px) 50vw";
+  image.alt = "showing restaurant is " + restaurant.name + " and cuisine type is " + restaurant.cuisine_type;
 
   }
 
   // add alt tag to images.
-  image.alt = "showing restaurant is " + restaurant.name + " and cuisine type is " + restaurant.cuisine_type;
 
   return li
 }
@@ -602,8 +599,6 @@ createRestaurantHTML = (restaurant,callback) => {
  * Update restaurants when selected.
  */
 updateSelectedRestaurants = () => {
-    console.log('updateSelectedRestaurants');
-
   const cSelect = document.getElementById('cuisines-select');
   const nSelect = document.getElementById('neighborhoods-select');
   const cIndex = cSelect.selectedIndex;
@@ -676,14 +671,18 @@ removeFavorite = (id) => {
     return res.json();
 
   }).then(response => {
+
     console.log('response status:', response.is_favorite);
+
+
+
   });
 
 }
 
+let restaurantsList = document.getElementById('restaurants-list');
 
-
-window.addEventListener('click', (e) => {
+restaurantsList.addEventListener('click', (e) => {
 
   let clickedElementID = e.target.id ;
   let clickedTarget = e.target;
@@ -698,10 +697,7 @@ window.addEventListener('click', (e) => {
 
     clickedTarget.classList.toggle('checked');
 
-    let p = document.getElementById('info' + clickedElementIDNumber);
-    p.innerHTML = 'Your Favorite';
-
-    p.style.color = '#c22c2c';
+    changeFavRestaurantBorder(true, clickedElementIDNumber-1);
 
   }
 
@@ -711,11 +707,8 @@ window.addEventListener('click', (e) => {
 
     clickedTarget.classList.toggle('checked');
 
-    let p = document.getElementById('info' + clickedElementIDNumber);
+    changeFavRestaurantBorder(false, clickedElementIDNumber-1);
 
-    p.innerHTML = 'Mark as Favorite';
-
-    p.style.color = '#cd9292';
   }
 
 

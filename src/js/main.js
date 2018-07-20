@@ -8,12 +8,10 @@ console.log('main.js');
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
-document.addEventListener('DOMContentLoaded', (event) => {
+window.addEventListener('load', (event) => {
   console.log('load');
   fetchNeighborhoods();
   fetchCuisines();
-
-
 });
 
 
@@ -37,7 +35,7 @@ fetchNeighborhoods = () => {
  * Set neighborhoods HTML.
  */
 fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
-    console.log('fillNeighborhoodsHTML');
+  //  console.log('fillNeighborhoodsHTML');
 
   const select = document.getElementById('neighborhoods-select');
   neighborhoods.forEach(neighborhood => {
@@ -49,7 +47,8 @@ fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
 }
 
 initMap = () => {
-  console.log('in init map');
+ // console.log('in init map');
+
   let loc = {
     lat: 40.722216,
     lng: -73.987501
@@ -60,13 +59,13 @@ initMap = () => {
     scrollwheel: false
   });
 
-  addMarkersToMap();
+//  addMarkersToMap();
 }
 /**
  * Fetch all cuisines and set their HTML.
  */
 fetchCuisines = () => {
-  console.log('fetchCuisines');
+//  console.log('fetchCuisines');
   updateRestaurants();
 
   DBHelper.fetchCuisines((error, cuisines) => {
@@ -83,7 +82,7 @@ fetchCuisines = () => {
  * Set cuisines HTML.
  */
 fillCuisinesHTML = (cuisines = self.cuisines) => {
-    console.log('fillCuisinesHTML');
+ //   console.log('fillCuisinesHTML');
 
   const select = document.getElementById('cuisines-select');
 
@@ -138,6 +137,7 @@ var elementCollapsable = document.getElementById('collapsible');
 
 elementCollapsable.addEventListener('click', () => {
   initMap();
+  addMarkersToMap();
 });
 
 
@@ -145,7 +145,7 @@ elementCollapsable.addEventListener('click', () => {
  * Add markers for current restaurants to the map.
  */
 addMarkersToMap = (restaurants = self.restaurants) => {
-  console.log('addMarkersToMap');
+ // console.log('addMarkersToMap');
 
   restaurants.forEach(restaurant => {
     // Add marker to the map
@@ -161,7 +161,7 @@ addMarkersToMap = (restaurants = self.restaurants) => {
  * Clear current restaurants, their HTML and remove their map markers.
  */
 resetRestaurants = (restaurants) => {
-  console.log('resetRestaurants');
+//  console.log('resetRestaurants');
 
   // Remove all restaurants
   self.restaurants = [];
@@ -177,7 +177,7 @@ resetRestaurants = (restaurants) => {
  * Create all restaurants HTML and add them to the webpage.
  */
 fillRestaurantsHTML = (restaurants = self.restaurants) => {
-  console.log('fillRestaurantsHTML');
+ // console.log('fillRestaurantsHTML');
   const ul = document.getElementById('restaurants-list');
   restaurants.forEach(restaurant => {
     ul.append(createRestaurantHTML(restaurant));

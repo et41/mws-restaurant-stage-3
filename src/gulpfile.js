@@ -6,9 +6,11 @@ var uglify = require('gulp-uglify-es').default;
 var htmlmin = require('gulp-htmlmin');
 var browserSync = require('browser-sync');
 var rename = require('gulp-rename');
+var gzip = require('gulp-gzip');
+var compression   = require("compression");
 
 
-gulp.task('default', ['serve','minify','styles','minify-css','scripts'], function() {
+gulp.task('default', ['serve','minify','styles','minify-css','scripts','scripts-ind'], function() {
 
 });
 /*gulp.task('dist', [
@@ -40,12 +42,23 @@ gulp.task('minify-css', function() {
     .pipe(gulp.dest('dist/sass'));
 });
 
+
 gulp.task('scripts', function(cb) {
-	return gulp.src(['js/**/dbhelper.js', 'js/**/main.js', 'js/**/intersection.js', 'js/**/mainRestaurants.js'])
-		.pipe(concat('all.js'))
-		.pipe(gulp.dest('js'))
-    .pipe(rename('uglify.js'))
+  return gulp.src(['js/**/dbhelper.js', 'js/**/main.js', 'js/**/intersection.js', 'js/**/mainRestaurants.js'])
+    .pipe(concat('all.js'))
+    .pipe(gulp.dest('js'))
+   .pipe(rename('uglify.js'))
     .pipe(uglify())
+   // .pipe(gzip())
+
+    .pipe(gulp.dest('dist/js'));
+});
+gulp.task('scripts-ind', function(cb) {
+  return gulp.src(['js/**/idb.js','js/**/dbhelper.js', 'js/**/main.js', 'js/**/intersection.js', 'js/**/mainRestaurants.js'])
+
+    .pipe(uglify())
+   // .pipe(gzip())
+
     .pipe(gulp.dest('dist/js'));
 });
 gulp.task('scripts-restaurant-review', function(cb) {
@@ -78,7 +91,8 @@ gulp.task('serve', ['minify','scripts','scripts-restaurant-review', 'minify-css'
   gulp.watch('css/*.css', ['minify-css']).on('change', browserSync.reload);
   gulp.watch('js/*.js', ['scripts']).on('change', browserSync.reload);
     gulp.watch('js/*.js', ['scripts-restaurant-review']).on('change', browserSync.reload);
-    gulp.watch('js/*.js').on('change', browserSync.reload);
+        gulp.watch('js/*.js', ['scripts-ind']).on('change', browserSync.reload);
+
   gulp.watch('css/*.css', ['styles']).on('change', browserSync.reload);
 
   gulp.watch('*.html').on('change', browserSync.reload);

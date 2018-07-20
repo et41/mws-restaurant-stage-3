@@ -21,7 +21,7 @@
           "Sunday": "12:00 pm - 4:00 pm, 5:30 pm - 11:00 pm"
         },
         "createdAt": 1504095563444,
-        "updatedAt": "2018-07-13T09:39:08.389Z",
+        "updatedAt": "2018-07-20T11:31:43.540Z",
         "id": 1,
         "is_favorite": false
       },
@@ -45,7 +45,7 @@
           "Sunday": "12:00 pm - 3:00 pm, 5:00 pm - 11:00 pm"
         },
         "createdAt": 1504095568414,
-        "updatedAt": "2018-07-12T19:46:16.428Z",
+        "updatedAt": "2018-07-20T11:31:45.616Z",
         "is_favorite": false,
         "id": 2
       },
@@ -69,7 +69,7 @@
           "Sunday": "11:30 am - 2:00 am"
         },
         "createdAt": 1504095571434,
-        "updatedAt": "2018-07-10T12:04:05.357Z",
+        "updatedAt": "2018-07-17T10:41:44.505Z",
         "id": 3,
         "is_favorite": false
       },
@@ -93,8 +93,8 @@
           "Sunday": "Sat - 10:30 pm"
         },
         "createdAt": 1504095567091,
-        "updatedAt": "2018-07-13T09:41:16.980Z",
-        "is_favorite": true,
+        "updatedAt": "2018-07-17T09:39:39.512Z",
+        "is_favorite": false,
         "id": 4
       },
       {
@@ -189,7 +189,7 @@
           "Sunday": "10:00 am - 3:00 pm, 5:30 pm - 11:00 pm"
         },
         "createdAt": 1504095567091,
-        "updatedAt": "2018-07-08T20:02:53.459Z",
+        "updatedAt": "2018-07-17T19:10:49.828Z",
         "is_favorite": false,
         "id": 8
       },
@@ -524,16 +524,6 @@
         "id": 77
       },
       {
-        "restaurant_id": "5",
-        "name": "brook",
-        "date": 1530876819133,
-        "createdAt": 1530876819134,
-        "updatedAt": 1530876819134,
-        "rating": "3",
-        "comments": "roberta's pizza is not bad",
-        "id": 78
-      },
-      {
         "restaurant_id": "8",
         "name": "Steve",
         "date": 1530877695433,
@@ -622,6 +612,36 @@
         "rating": "4",
         "comments": "good restaurant",
         "id": 153
+      },
+      {
+        "restaurant_id": "4",
+        "name": "off1",
+        "date": 1531820462483,
+        "createdAt": 1531820462483,
+        "updatedAt": 1531820462483,
+        "rating": "1",
+        "comments": "off1",
+        "id": 154
+      },
+      {
+        "restaurant_id": "3",
+        "name": "eren",
+        "date": 1531823437529,
+        "createdAt": 1531823437529,
+        "updatedAt": 1531823437529,
+        "rating": "3",
+        "comments": "eren",
+        "id": 10
+      },
+      {
+        "restaurant_id": "10",
+        "name": "off",
+        "date": 1532006781227,
+        "createdAt": 1532006781227,
+        "updatedAt": 1532006781227,
+        "rating": "3",
+        "comments": "off",
+        "id": 78
       }
     ]
   },
@@ -677,7 +697,7 @@
       "id": 10
     },
     "reviews": {
-      "id": 153
+      "id": 154
     }
   }
 }

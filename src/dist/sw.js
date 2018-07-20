@@ -9,31 +9,13 @@ self.addEventListener('install', (event) => {
        '/css/main-aux.css',
        '/css/main.css',
        '/css/restaurant.css',
-       'dist/js/main.js',
-       'dist/js/restaurant_info.js',
-       'dist/js/dbhelper.js',
+       'dist/js/uglify_restaurant.js',
+        'dist/js/uglify.js',
+
+       /*'dist/js/restaurant_info.js',
+       'dist/js/dbhelper.js',*/
        //'/restaurants',
-       '/images/',
-       '/images/1-400small.jpg',
-       '/images/1-600medium.jpg',
-       '/images/2-400small.jpg',
-       '/images/2-600medium.jpg',
-       '/images/3-400small.jpg',
-       '/images/3-600medium.jpg',
-       '/images/4-400small.jpg',
-       '/images/4-600medium.jpg',
-       '/images/5-400small.jpg',
-       '/images/5-600medium.jpg',
-       '/images/6-400small.jpg',
-       '/images/6-600medium.jpg',
-       '/images/7-400small.jpg',
-       '/images/7-600medium.jpg',
-       '/images/8-400small.jpg',
-       '/images/8-600medium.jpg',
-       '/images/9-400small.jpg',
-       '/images/9-600medium.jpg',
-       '/images/10-400small.jpg',
-       '/images/10-600medium.jpg'
+       '/images/'
      ]).then(() => {
       console.log('All Files are cached');
       return self.skipWaiting();
@@ -50,9 +32,9 @@ self.addEventListener('activate', (event) => {
 
 
 self.addEventListener('fetch', (event) => {
-  console.log('event in sw', event);
-  if(event.request.method != 'POST' && !event.request.url.includes('/reviews')
-    && !event.request.url.includes('/reviews')) {
+  console.log('event in sw', event.request.url);
+  if(event.request.method != 'POST' && event.request.method != 'PUT'
+    && !event.request.url.includes('/reviews')  && !event.request.url.includes('/restaurants') && !event.request.url.includes('/browser-sync')) {
   event.respondWith(
     caches.open('/restaurant').then((cache) => {
       return cache.match(event.request).then((response) => {
