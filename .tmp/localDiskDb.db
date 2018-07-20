@@ -21,7 +21,7 @@
           "Sunday": "12:00 pm - 4:00 pm, 5:30 pm - 11:00 pm"
         },
         "createdAt": 1504095563444,
-        "updatedAt": "2018-07-20T11:31:43.540Z",
+        "updatedAt": "2018-07-20T12:13:27.996Z",
         "id": 1,
         "is_favorite": false
       },
@@ -69,7 +69,7 @@
           "Sunday": "11:30 am - 2:00 am"
         },
         "createdAt": 1504095571434,
-        "updatedAt": "2018-07-17T10:41:44.505Z",
+        "updatedAt": "2018-07-20T12:06:53.639Z",
         "id": 3,
         "is_favorite": false
       },
@@ -93,7 +93,7 @@
           "Sunday": "Sat - 10:30 pm"
         },
         "createdAt": 1504095567091,
-        "updatedAt": "2018-07-17T09:39:39.512Z",
+        "updatedAt": "2018-07-20T12:00:23.479Z",
         "is_favorite": false,
         "id": 4
       },
@@ -117,7 +117,7 @@
           "Sunday": "10:00 am - 12:00 am"
         },
         "createdAt": 1504095567071,
-        "updatedAt": "2018-07-08T20:11:07.674Z",
+        "updatedAt": "2018-07-20T12:13:46.147Z",
         "is_favorite": false,
         "id": 5
       },
@@ -213,7 +213,7 @@
           "Sunday": "5:00 pm - 10:00 pm"
         },
         "createdAt": 1504095567191,
-        "updatedAt": 1504095567191,
+        "updatedAt": "2018-07-20T12:13:55.218Z",
         "is_favorite": false,
         "id": 9
       },

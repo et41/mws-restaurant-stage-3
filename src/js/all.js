@@ -503,16 +503,18 @@ var io = new IntersectionObserver(entries => {
 
 changeFavRestaurantBorder = (is_fav, listNumber) => {
 
-  let favRestaurant = document.querySelectorAll('#restaurants-list li');
-
+  //let favRestaurant = document.querySelectorAll('#restaurants-list li');
+  let favRestaurant = document.getElementById('restaurant'+listNumber);
+  console.log('favRestaurant,is_fav,listNumber', favRestaurant,is_fav,listNumber);
   if(is_fav) {
     console.log('fav', favRestaurant);
-    favRestaurant[listNumber].style.borderColor = '#c22c2c';
-
+    //favRestaurant[listNumber].style.borderColor = '#c22c2c';
+    favRestaurant.style.borderColor = '#c22c2c';
   } else {
     console.log('else', favRestaurant);
 
-    favRestaurant[listNumber].style.borderColor = '#ccc';
+    //favRestaurant[listNumber].style.borderColor = '#ccc';
+    favRestaurant.style.borderColor = '#ccc';
 
   }
 
@@ -534,6 +536,7 @@ createRestaurantHTML = (restaurant,callback) => {
   //console.log('createRestaurantHTML',restaurant);
 
   const li = document.createElement('li');
+  li.id = 'restaurant' + restaurant.id;
   io.observe(li);
   let image = document.createElement('img');
   image.className = 'restaurant-img';
@@ -617,9 +620,20 @@ updateSelectedRestaurants = () => {
 }
 
 afterUpdate = (x) => {
-console.log('afterUpdate');
+console.log('afterUpdate',x);
 
  x.forEach(a => {
+  let status = restaurant.is_favorite;
+      if(status){
+      li.style.borderColor = '#c22c2c';
+
+      // fav.className='fa fa-star checked';
+      fav.className='checked';
+    } else {
+      li.style.borderColor = '#ccc';
+      //fav.className='fa fa-star';
+      fav.className='';
+    }
   let restaurant = a;
   image = document.getElementById('image'+a.id);
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
@@ -683,7 +697,7 @@ removeFavorite = (id) => {
 let restaurantsList = document.getElementById('restaurants-list');
 
 restaurantsList.addEventListener('click', (e) => {
-
+  console.log('click', e);
   let clickedElementID = e.target.id ;
   let clickedTarget = e.target;
   let clickedElementIDNumber = clickedElementID.replace( /^\D+/g, '');
@@ -697,7 +711,7 @@ restaurantsList.addEventListener('click', (e) => {
 
     clickedTarget.classList.toggle('checked');
 
-    changeFavRestaurantBorder(true, clickedElementIDNumber-1);
+    changeFavRestaurantBorder(true, clickedElementIDNumber);
 
   }
 
@@ -707,7 +721,7 @@ restaurantsList.addEventListener('click', (e) => {
 
     clickedTarget.classList.toggle('checked');
 
-    changeFavRestaurantBorder(false, clickedElementIDNumber-1);
+    changeFavRestaurantBorder(false, clickedElementIDNumber);
 
   }
 
