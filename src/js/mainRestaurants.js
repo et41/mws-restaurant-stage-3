@@ -1,24 +1,28 @@
-//console.log('mainRestaurants.js');
 
+/**
+ * change restaurant border if it is a favorite
+ */
 changeFavRestaurantBorder = (is_fav, listNumber) => {
 
   //let favRestaurant = document.querySelectorAll('#restaurants-list li');
   let favRestaurant = document.getElementById('restaurant'+listNumber);
-  console.log('favRestaurant,is_fav,listNumber', favRestaurant,is_fav,listNumber);
+  //console.log('favRestaurant,is_fav,listNumber', favRestaurant,is_fav,listNumber);
   if(is_fav) {
-    console.log('fav', favRestaurant);
+  ///  console.log('fav', favRestaurant);
     //favRestaurant[listNumber].style.borderColor = '#c22c2c';
     favRestaurant.style.borderColor = '#c22c2c';
   } else {
-    console.log('else', favRestaurant);
+   // console.log('else', favRestaurant);
 
     //favRestaurant[listNumber].style.borderColor = '#ccc';
     favRestaurant.style.borderColor = '#ccc';
 
   }
-
 }
 
+/**
+ * get fav status
+ */
 getRestaurantfavStatus = (id) => {
   return fetch(`http://localhost:1337/restaurants/${id}`).then(response => {
     return response.json();
@@ -65,7 +69,6 @@ createRestaurantHTML = (restaurant,callback) => {
   fav.id = 'fav' + restaurant.id;
   fav.innerHTML =' ☆';
   // control favorite status of restaurant
-  //console.log('createRestaurantHTML',restaurant,getRestaurantfavStatus(restaurant.id));
   getRestaurantfavStatus(restaurant.id).then(status => {
     if(status){
       li.style.borderColor = '#c22c2c';
@@ -79,6 +82,7 @@ createRestaurantHTML = (restaurant,callback) => {
     }
   });
   li.append(fav);
+  image.alt = "showing restaurant is " + restaurant.name + " and cuisine type is " + restaurant.cuisine_type;
 
   loadImage = (restaurant, idStr) => {
  // console.log('loadImage,restaurant,idStr', restaurant,idStr);
@@ -88,7 +92,6 @@ createRestaurantHTML = (restaurant,callback) => {
   //add srcset and sizes to make responsive images.
   image.srcset =  `images/${restaurant.id}-300small_low.jpg 480w,images/${restaurant.id}-600medium.jpg 600w`;
   image.sizes =  "(max-width: 600px) 20vw,(min-width: 601px) 50vw";
-  image.alt = "showing restaurant is " + restaurant.name + " and cuisine type is " + restaurant.cuisine_type;
 
   }
 
@@ -119,7 +122,7 @@ updateSelectedRestaurants = () => {
 }
 
 afterUpdate = (x) => {
-console.log('afterUpdate',x);
+//console.log('afterUpdate',x);
 
  x.forEach(a => {
   let status = restaurant.is_favorite;
@@ -145,7 +148,7 @@ console.log('afterUpdate',x);
 }
 
 /**
- * Add and remove favorite restaurants.
+ * Add favorite restaurants.
  */
 addFavorite = (id) => {
 
@@ -159,15 +162,18 @@ addFavorite = (id) => {
     }
 
   }).then(res => {
-    console.log('response status:', res);
+   // console.log('response status:', res);
     return res.json();
 
   }).then(response => {
-    console.log('response status:', response.is_favorite);
+   // console.log('response status:', response.is_favorite);
 
   });
 }
 
+/**
+ * Remove favorite restaurants.
+ */
 removeFavorite = (id) => {
 
   fetch(`http://localhost:1337/restaurants/${id}/`,
@@ -180,12 +186,12 @@ removeFavorite = (id) => {
     }
 
   }).then(res => {
-    console.log('response status:', res);
+   // console.log('response status:', res);
     return res.json();
 
   }).then(response => {
 
-    console.log('response status:', response.is_favorite);
+   // console.log('response status:', response.is_favorite);
 
 
 
@@ -196,7 +202,7 @@ removeFavorite = (id) => {
 let restaurantsList = document.getElementById('restaurants-list');
 
 restaurantsList.addEventListener('click', (e) => {
-  console.log('click', e);
+  //console.log('click', e);
   let clickedElementID = e.target.id ;
   let clickedTarget = e.target;
   let clickedElementIDNumber = clickedElementID.replace( /^\D+/g, '');
@@ -204,7 +210,7 @@ restaurantsList.addEventListener('click', (e) => {
 
   if (clickedElementID.includes('fav') && !clickedTarget.classList.contains('checked') ) {
 
-    console.log('clicked', e);
+   // console.log('clicked', e);
 
     addFavorite(clickedElementIDNumber);
 
@@ -227,4 +233,9 @@ restaurantsList.addEventListener('click', (e) => {
 
 });
 
+/*
 
+restaurantsList.addEventListener('onfocus', event => {
+
+});
+*/

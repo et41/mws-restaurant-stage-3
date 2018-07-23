@@ -79,7 +79,7 @@
   border : none;
   background-color: inherit;
   font-size: 45px;
-  color: #cd9292;
+  color: #b17878;
   float: right;
   box-shadow: none;
 
@@ -139,3 +139,6 @@ strong {
 .active, .collapsible:hover {
   background-color: #ccc;
 }
+/*#restaurants-list li button:focus {
+  color: #c22c2c;
+}*/

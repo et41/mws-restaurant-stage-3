@@ -1,4 +1,6 @@
-
+/**
+ *Implement Intersect Feature
+ */
 let idIntersectingElement;
 var io = new IntersectionObserver(entries => {
   console.log('iointersect');

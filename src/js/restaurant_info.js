@@ -226,8 +226,9 @@ addReview = () => {
   let rev = document.getElementById('form');
   rev.style.top = "18vh";
   rev.style.left = "10vw";
-
+  //rev.focus();
   let main = document.getElementById('maincontent');
+  //main.blur();
   main.style.opacity = "0.5";
 
   let breadcrumb = document.getElementById('breadcrumb');
