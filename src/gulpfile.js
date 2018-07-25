@@ -10,7 +10,7 @@ var gzip = require('gulp-gzip');
 var compression   = require("compression");
 
 
-gulp.task('default', ['serve','minify','styles','minify-css','scripts','scripts-ind'], function() {
+gulp.task('default', ['serve','minify','styles','minify-css','scripts','scripts-ind','scripts-restaurant-review'], function() {
 
 });
 /*gulp.task('dist', [
@@ -75,6 +75,8 @@ gulp.task('scripts-restaurant-review', function(cb) {
 gulp.task('watch', function() {
   gulp.watch('css/*.css', ['minify-css']);
   gulp.watch('js/*.js', ['scripts']);
+
+  gulp.watch('js/*.js', ['scripts-restaurant-review']);
 });
 
 

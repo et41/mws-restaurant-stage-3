@@ -33,6 +33,15 @@ getParameterByName = (name, url) => {
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
+getRestaurantfavStatus = (id) => {
+  return fetch(`http://localhost:1337/restaurants/${id}`).then(response => {
+    return response.json();
+  }).then(restaurant => {
+  //  console.log('getRestaurantfavStatus',restaurant);
+    return restaurant.is_favorite;
+  });
+}
+
 /**
  * Get current restaurant from page URL.
  */
@@ -64,10 +73,34 @@ fetchRestaurantFromURL = (callback) => {
 fillRestaurantHTML = (restaurant = self.restaurant) => {
   const name = document.getElementById('restaurant-name');
   name.innerHTML = restaurant.name;
+  let fav = document.getElementById('fav');
 
+  getRestaurantfavStatus(restaurant.id).then(status => {
+    console.log('status', status);
+    if(status){
+      //li.style.borderColor = '#c22c2c';
+
+      // fav.className='fa fa-star checked';
+      let span = document.createElement('span');
+      span.id = 'favspan';
+      span.innerHTML = 'Your Favorite';
+      fav.append(span);
+      fav.className='checked';
+    } else {
+     // li.style.borderColor = '#ccc';
+      //fav.className='fa fa-star';
+       let span = document.createElement('span');
+             span.id = 'favspan';
+
+      span.innerHTML = 'Mark as Favorite';
+      fav.append(span);
+      fav.className='unchecked';
+    }
+  });
   const address = document.getElementById('restaurant-address');
   address.innerHTML = restaurant.address;
 
+  console.log('apppenddd');
   const image = document.getElementById('restaurant-img');
   // add alt tag to images.
   image.alt = "Showing restaurant is " + restaurant.name + " and cuisine type is " + restaurant.cuisine_type;
@@ -524,6 +557,98 @@ window.addEventListener('online', (e) => {
   }
 
 });
+
+
+
+let restaurantsList = document.getElementById('restaurant-container');
+
+restaurantsList.addEventListener('click', (e) => {
+  //console.log('click', e);
+  let clickedElementID = e.target.id ;
+  let clickedTarget = e.target;
+  let clickedElementIDNumber = clickedElementID.replace( /^\D+/g, '');
+  let restaurantID = Number(getParameterByName('id'));
+  let span = document.getElementById('favspan');
+
+  if (clickedElementID.includes('fav') && !clickedTarget.classList.contains('checked') ) {
+
+   // console.log('clicked', e);
+
+  //  addFavorite(clickedElementIDNumber);
+
+    clickedTarget.className = 'checked';
+
+    span.innerHTML = 'Your Favorite';
+
+    addFavorite(restaurantID);
+  }
+
+  else if (clickedElementID.includes('fav') && clickedTarget.classList.contains('checked')) {
+
+  //  removeFavorite(clickedElementIDNumber);
+
+    clickedTarget.className = 'unchecked';
+
+    span.innerHTML = 'Add Favorite';
+
+    removeFavorite(restaurantID);
+    console.log('restaurant',restaurant.id);
+  }
+
+
+});
+
+/**
+ * Add favorite restaurants.
+ */
+addFavorite = (id) => {
+
+  fetch(`http://localhost:1337/restaurants/${id}/`,
+   {
+
+    method: 'PUT',
+    body: JSON.stringify({"is_favorite":true}),
+    headers:{
+      'Content-Type': 'application/json'
+    }
+
+  }).then(res => {
+   // console.log('response status:', res);
+    return res.json();
+
+  }).then(response => {
+   // console.log('response status:', response.is_favorite);
+
+  });
+}
+
+/**
+ * Remove favorite restaurants.
+ */
+removeFavorite = (id) => {
+
+  fetch(`http://localhost:1337/restaurants/${id}/`,
+   {
+
+    method: 'PUT',
+    body: JSON.stringify({"is_favorite":false}),
+    headers:{
+      'Content-Type': 'application/json'
+    }
+
+  }).then(res => {
+   // console.log('response status:', res);
+    return res.json();
+
+  }).then(response => {
+
+   // console.log('response status:', response.is_favorite);
+
+
+
+  });
+
+}
 //delete review
 /*
 for( let i =72 ; i <73; i++) {

@@ -63,7 +63,10 @@ createRestaurantHTML = (restaurant,callback) => {
   more.href = DBHelper.urlForRestaurant(restaurant);
   li.append(more);
   const fav = document.createElement('button');
-
+  /*const favNote = document.createElement('span');
+  favNote.innerHTML = 'FAV';
+  console.log('fav inner html');
+  li.append(favNote);*/
  // const but = document.createElement('button');
 
   fav.id = 'fav' + restaurant.id;

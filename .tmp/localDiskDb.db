@@ -21,9 +21,9 @@
           "Sunday": "12:00 pm - 4:00 pm, 5:30 pm - 11:00 pm"
         },
         "createdAt": 1504095563444,
-        "updatedAt": "2018-07-23T10:15:43.025Z",
+        "updatedAt": "2018-07-25T21:16:52.176Z",
         "id": 1,
-        "is_favorite": false
+        "is_favorite": true
       },
       {
         "name": "Emily",
@@ -45,7 +45,7 @@
           "Sunday": "12:00 pm - 3:00 pm, 5:00 pm - 11:00 pm"
         },
         "createdAt": 1504095568414,
-        "updatedAt": "2018-07-23T10:16:51.720Z",
+        "updatedAt": "2018-07-25T21:17:03.814Z",
         "is_favorite": false,
         "id": 2
       },
@@ -69,7 +69,7 @@
           "Sunday": "11:30 am - 2:00 am"
         },
         "createdAt": 1504095571434,
-        "updatedAt": "2018-07-23T10:12:02.956Z",
+        "updatedAt": "2018-07-25T19:05:21.978Z",
         "id": 3,
         "is_favorite": false
       },
@@ -93,7 +93,7 @@
           "Sunday": "Sat - 10:30 pm"
         },
         "createdAt": 1504095567091,
-        "updatedAt": "2018-07-23T10:13:02.379Z",
+        "updatedAt": "2018-07-25T21:31:42.360Z",
         "is_favorite": false,
         "id": 4
       },

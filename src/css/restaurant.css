@@ -131,14 +131,7 @@ nav h1 a {
   width: 100%;
   box-shadow: 3px 2px 10px #888888;
 }
-.inside #staticmap {
-position: relative;
-border: 2px solid #d9d9d9;
-background-color: #ccc;
-height: 95%;
-width: 100%;
-box-shadow: 3px 2px 10px #888888;
-}
+
 #restaurant-name {
   color: #d07000;
   font-family: Arial,sans-serif;
@@ -180,7 +173,8 @@ box-shadow: 3px 2px 10px #888888;
 #restaurant-container, #reviews-container {
   border: 3px solid #d9d9d9;
   width: 80%;
-  margin: auto;
+  /*margin: auto;*/
+  margin-left: 10%;
 }
 #reviews-container h3 {
   color: #5e3c10;
@@ -222,12 +216,38 @@ textarea {
   height: 40%
 
 }
-button {
-  margin: auto;
-  display: block;
-  padding-top: 5px;
+.checked {
+  font-size: 45px;
+  color: #c22c2c;
+  border: none;
+  background-color: inherit;
+  outline: none;
+  /*float:left;*/
+  position: relative;
+  left: 42%;
+  box-shadow: none;
+}
+
+#fav:focus {
+  box-shadow: 0 0 5px #cc3e6e;
+}
+.unchecked {
+    font-size: 45px;
+
+  border : none;
+  background-color: inherit;
+  font-size: 45px;
+  color: #b17878;
+  /*float: left;*/
+  position: relative;
+    left: 42%;
+ box-shadow: none;
+
+}
+span {
   font-size: 15px;
-  width: 20%;
+  color: black;
+  display: block;
 }
 #reviews-list {
   background-color: #eee;

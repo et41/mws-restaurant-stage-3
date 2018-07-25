@@ -64,6 +64,11 @@ fetchRestaurantFromURL = (callback) => {
 fillRestaurantHTML = (restaurant = self.restaurant) => {
   const name = document.getElementById('restaurant-name');
   name.innerHTML = restaurant.name;
+  const fav = document.createElement('button');
+
+  fav.id = 'fav' + restaurant.id;
+  fav.innerHTML =' ☆';
+  console.log('apppenddd');
 
   const address = document.getElementById('restaurant-address');
   address.innerHTML = restaurant.address;
@@ -121,10 +126,12 @@ fillReviewsHTML = (reviews, callback) => {
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h3');
   title.innerHTML = 'Reviews';
+
+
   //add tabindex to title
   title.setAttribute('tabindex', '0');
   container.appendChild(title);
-
+  console.log('apppenddd');
   if (!reviews) {
     const noReviews = document.createElement('p');
     noReviews.innerHTML = 'No reviews yet!';
