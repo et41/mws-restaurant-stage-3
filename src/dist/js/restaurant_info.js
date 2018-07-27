@@ -89,8 +89,8 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     } else {
      // li.style.borderColor = '#ccc';
       //fav.className='fa fa-star';
-       let span = document.createElement('span');
-             span.id = 'favspan';
+      let span = document.createElement('span');
+      span.id = 'favspan';
 
       span.innerHTML = 'Mark as Favorite';
       fav.append(span);

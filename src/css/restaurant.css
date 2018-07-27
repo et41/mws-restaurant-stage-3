@@ -138,14 +138,18 @@ nav h1 a {
   font-size: 18pt;
   font-weight: 600;
   letter-spacing: 0;
-  margin: 15px 0 30px;
-  text-transform: uppercase;
+    /* margin: 15px 0 30px; */
+    margin: 10px;
+      text-transform: uppercase;
   line-height: 1.1;
   text-align:center;
+  width: 100%;
+
 }
 #restaurant-img {
   width: 50vw;
   margin:0 0 0 18%;
+      padding-top: 10px;
 }
 @media screen and (max-width:600px) {
   #restaurant-img {
@@ -216,15 +220,23 @@ textarea {
   height: 40%
 
 }
+#fav-name {
+      width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    height: 13%;
+}
 .checked {
-  font-size: 45px;
+  border-color:black ;
+  font-size: 25pt;
   color: #c22c2c;
   border: none;
   background-color: inherit;
   outline: none;
-  /*float:left;*/
-  position: relative;
-  left: 42%;
+  padding: 0;
+    width: 100%;
+    /* position: relative; */
+    /* left: 42%; */
   box-shadow: none;
 }
 
@@ -232,15 +244,16 @@ textarea {
   box-shadow: 0 0 5px #cc3e6e;
 }
 .unchecked {
-    font-size: 45px;
+  padding: 0;
 
   border : none;
   background-color: inherit;
-  font-size: 45px;
+  font-size: 25pt;
   color: #b17878;
   /*float: left;*/
-  position: relative;
-    left: 42%;
+    width: 100%;
+    /* position: relative; */
+    /* left: 42%; */
  box-shadow: none;
 
 }
