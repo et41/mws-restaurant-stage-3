@@ -143,3 +143,11 @@ http://localhost:1337/reviews/<review_id>
 
 If you find a bug in the source code or a mistake in the documentation, you can help us by
 submitting an issue to our [Waffle Dashboard](https://waffle.io/udacity/mwnd-issues). Even better you can submit a Pull Request with a fix :)
+
+##Student Note
+
+1- Run npm -install in root file.
+2- Run node server.
+2- Go to src folder (cd src).
+3- Run npm -install.
+4- Then run gulp in same folder(src). (It serves from /dist)
