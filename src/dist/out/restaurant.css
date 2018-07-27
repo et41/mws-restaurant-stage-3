@@ -227,9 +227,10 @@ textarea {
     height: 13%;
 }
 .checked {
-  border-color:#c22c2c ;
+  border-color:black ;
   font-size: 25pt;
   color: #c22c2c;
+  border: none;
   background-color: inherit;
   outline: none;
   padding: 0;
@@ -249,8 +250,10 @@ textarea {
   background-color: inherit;
   font-size: 25pt;
   color: #b17878;
+  /*float: left;*/
     width: 100%;
-
+    /* position: relative; */
+    /* left: 42%; */
  box-shadow: none;
 
 }

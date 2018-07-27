@@ -9,8 +9,10 @@ var rename = require('gulp-rename');
 var gzip = require('gulp-gzip');
 var compression   = require("compression");
 
+var inlineCss = require('gulp-inline-css');
 
-gulp.task('default', ['serve','minify','styles','minify-css','scripts','scripts-ind','scripts-restaurant-review'], function() {
+
+gulp.task('default', ['serve','minify','styles','minify-css','scripts','scripts-ind','scripts-restaurant-review',], function() {
 
 });
 /*gulp.task('dist', [
@@ -19,7 +21,6 @@ gulp.task('default', ['serve','minify','styles','minify-css','scripts','scripts-
 	'minify',
 	'serve',
 ]);*/
-
 
 gulp.task('minify', function() {
   return gulp.src('*.html')

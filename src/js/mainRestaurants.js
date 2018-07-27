@@ -24,6 +24,7 @@ changeFavRestaurantBorder = (is_fav, listNumber) => {
  * get fav status
  */
 getRestaurantfavStatus = (id) => {
+  console.log('getRestaurantfavStatus');
   return fetch(`http://localhost:1337/restaurants/${id}`).then(response => {
     return response.json();
   }).then(restaurant => {
@@ -107,8 +108,10 @@ createRestaurantHTML = (restaurant,callback) => {
  * Update restaurants when selected.
  */
 updateSelectedRestaurants = () => {
-  const cSelect = document.getElementById('cuisines-select');
-  const nSelect = document.getElementById('neighborhoods-select');
+    console.log('uppppp2222');
+
+ /* const cSelect = document.getElementById('cuisines-select');
+  const nSelect = document.getElementById('neighborhoods-select');*/
   const cIndex = cSelect.selectedIndex;
   const nIndex = nSelect.selectedIndex;
   const cuisine = cSelect[cIndex].value;

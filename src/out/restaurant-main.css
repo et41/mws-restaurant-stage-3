@@ -1,69 +1,14 @@
-/* CSS Document */
-body,td,th,p {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 10pt;
-  color: #333;
-  line-height: 1.5;
-  margin: 0;
+#footer {
+  color: #B1B1B1;
+  background: #444444;
+  opacity: 1;
+  font-size: 8pt;
+  letter-spacing: 1px;
+  padding: 25px;
+  margin-bottom: -70px;
+  text-align: center;
+  text-transform: uppercase;
 }
-body {
-  background-color: #fdfdfd;
-}
-/*ul, li {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 2.5vh;
-  color: #333;
-}*/
-a {
-  color: orange;
-  text-decoration: none;
-}
-a:hover, a:focus {
-  color: #3397db;
-  text-decoration: none;
-}
-a img{
-  border: none 0px #fff;
-}
-h1, h2, h3, h4, h5, h6 {
-  font-family: Arial, Helvetica, sans-serif;
-}
-article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
-  display: block;
-}
-#breadcrumb {
-  list-style: none;
-  background-color: #eee;
-  width: 100%;
-  box-shadow: 3px 2px 5px #888888;
-  height: 7%;
-}
-/* Display list items side by side */
-#breadcrumb ol li {
-  display: inline;
-}
-
-/* Add a slash symbol (/) before/behind each list item */
-#breadcrumb li+li:before {
-  padding: 8px;
-  color: black;
-  content: "/\00a0";
-}
-
-/* Add a color to all links inside the list */
-#breadcrumb ol li a {
-  color: #005096;
-  text-decoration: none;
-}
-#breadcrumb ol  {
-  padding-left: 10px;
-}
-/* Add a color on mouse-over */
-#breadcrumb ol li a:hover {
-  color: #01447e;
-  text-decoration: underline;
-}
-
 nav {
   width: 100%;
   height: 80px;
@@ -81,21 +26,6 @@ nav h1 a {
   letter-spacing: 10px;
   text-transform: uppercase;
 }
-.collapsible {
-  background-color: #ccc;
-  color: #444;
-  padding: 18px;
-  margin-left: 5px;
-  width: 100%;
-  border: none;
-  text-align: center;
-  outline: none;
-  font-size: 15px;
-}
-.active, .collapsible:hover {
-  background-color: #eee;
-}
-
 .inside{
   width: 100%;
 }
@@ -119,7 +49,8 @@ nav h1 a {
 .inside #map-container {
  /* position: absolute;
   left: -100%;*/
-  max-height: 400px;
+  position: relative;
+  height: 400px;
   width: 100%;
   margin: 20vh 8px 0 6px;
 }
@@ -138,18 +69,14 @@ nav h1 a {
   font-size: 18pt;
   font-weight: 600;
   letter-spacing: 0;
-    /* margin: 15px 0 30px; */
-    margin: 10px;
-      text-transform: uppercase;
+  margin: 15px 0 30px;
+  text-transform: uppercase;
   line-height: 1.1;
   text-align:center;
-  width: 100%;
-
 }
 #restaurant-img {
   width: 50vw;
   margin:0 0 0 18%;
-      padding-top: 10px;
 }
 @media screen and (max-width:600px) {
   #restaurant-img {
@@ -177,8 +104,7 @@ nav h1 a {
 #restaurant-container, #reviews-container {
   border: 3px solid #d9d9d9;
   width: 80%;
-  /*margin: auto;*/
-  margin-left: 10%;
+margin-left: 10%;
 }
 #reviews-container h3 {
   color: #5e3c10;
@@ -188,94 +114,11 @@ nav h1 a {
   margin: 15px;
   font-size: 2em;
 }
-#form {
-  border: 1px solid;
-  padding-top: 20px;
-  font-size: 15px;
-  font-weight: 700;
-  text-align: center;
-  color: black;
-  background-color: #726464;
-  position: fixed;
-  left: -100%;
-  z-index: 1000;
-  height: 70%;
-  width: 80%;
-
-}
-#form input {
-  padding-top: 5px;
-  font-size: 15px;
-  width: 70%;
-  height: 10%
-}
-textarea {
-  font-size: 15px;
-  width: 70%;
-  height: 10%
-}
-#Review {
-  font-size: 15px;
-  width: 70%;
-  height: 40%
-
-}
-#fav-name {
-      width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    height: 13%;
-}
-.checked {
-  border-color:#c22c2c ;
-  font-size: 25pt;
-  color: #c22c2c;
-  background-color: inherit;
-  outline: none;
-  padding: 0;
-    width: 100%;
-    /* position: relative; */
-    /* left: 42%; */
-  box-shadow: none;
-}
-
-#fav:focus {
-  box-shadow: 0 0 5px #cc3e6e;
-}
-.unchecked {
-  padding: 0;
-
-  border : none;
-  background-color: inherit;
-  font-size: 25pt;
-  color: #b17878;
-    width: 100%;
-
- box-shadow: none;
-
-}
-span {
-  font-size: 15px;
-  color: black;
-  display: block;
-}
 #reviews-list {
   background-color: #eee;
   padding:0;
 }
-#addReview {
-    font-size: 13px;
 
-  box-shadow: 3px 3px 10px #888888;
-  background: none;
-  background-color: #333;
-  color: wheat;
-  padding: 8px;
-  margin-top: 20px;
-  margin-right: 4vw;
-  float: right;
-
-}
 #reviews-list li {
   background-color: #eee;
   border: 2px solid #333;
@@ -377,15 +220,4 @@ span {
 }
 *:hover {
   outline: none;
-}
-#footer {
-  color: #B1B1B1;
-  background: #444444;
-  opacity: 1;
-  font-size: 8pt;
-  letter-spacing: 1px;
-  padding: 25px;
-  margin-bottom: -70px;
-  text-align: center;
-  text-transform: uppercase;
 }

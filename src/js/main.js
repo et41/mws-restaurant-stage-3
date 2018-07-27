@@ -30,6 +30,28 @@ fetchNeighborhoods = () => {
     }
   });
 }
+let selectedRestaurants = {};
+const cSelect = document.getElementById('cuisines-select');
+const nSelect = document.getElementById('neighborhoods-select');
+/**
+ * Update page and map for current restaurants.
+ */
+updateRestaurants = () => {
+  console.log('uppppp');
+  const cIndex = cSelect.selectedIndex;
+  const nIndex = nSelect.selectedIndex;
+  const cuisine = cSelect[cIndex].value;
+  const neighborhood = nSelect[nIndex].value;
+
+  DBHelper.fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, (error, restaurants) => {
+    if (error) { // Got an error!
+      console.error(error);
+    } else {
+      resetRestaurants(restaurants);
+      fillRestaurantsHTML();
+    }
+  })
+}
 
 /**
  * Set neighborhoods HTML.
@@ -94,29 +116,6 @@ fillCuisinesHTML = (cuisines = self.cuisines) => {
   });
 }
 
-let selectedRestaurants = {};
-
-/**
- * Update page and map for current restaurants.
- */
-updateRestaurants = () => {
-    console.log('updateRestaurants');
-
-  const cSelect = document.getElementById('cuisines-select');
-  const nSelect = document.getElementById('neighborhoods-select');
-  const cIndex = cSelect.selectedIndex;
-  const nIndex = nSelect.selectedIndex;
-  const cuisine = cSelect[cIndex].value;
-  const neighborhood = nSelect[nIndex].value;
-  DBHelper.fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, (error, restaurants) => {
-    if (error) { // Got an error!
-      console.error(error);
-    } else {
-      resetRestaurants(restaurants);
-      fillRestaurantsHTML();
-    }
-  })
-}
 
 var coll = document.getElementsByClassName("collapsible");
 var i;
